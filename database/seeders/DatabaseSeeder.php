@@ -3,10 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,16 +12,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::where('username', 'admin');
-        if ($user->first()) {
-            $user->delete();
-        }
-        User::create([
-            'uuid' => Str::orderedUuid(),
-            'name' => 'Admin',
+        // \App\Models\User::factory(10)->create();
+
+        \App\Models\User::factory()->create([
+            'name' => 'Rizal',
             'username' => 'admin',
-            'password' => Hash::make('admin'),
-            'role' => "ADMIN",
+            'email' => 'test@example.com',
+            'password' => bcrypt('admin'),
         ]);
     }
 }

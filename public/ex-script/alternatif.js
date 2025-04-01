@@ -6,23 +6,22 @@ $(document).ready(function () {
         serverSide: true,
         ajax: {
             url: "/dataTablesAlternatif",
-            type: "GET",
-            data: (data) => {
-                data.dapil_uuid = $("#filter-dapil").val()
-            }
         },
         columns: [
             {
-                data: "kode"
-            },
-            {
                 data: null,
-                render: (data) => {
-                    return "Dapil " + data.bkode
-                }
+                orderable: false,
+                render: function (data, type, row, meta) {
+                    var pageInfo = $("#table-alternatif").DataTable().page.info();
+                    var index = meta.row + pageInfo.start + 1;
+                    return index;
+                },
             },
             {
-                data: "alternatif"
+                data: "alternatif",
+            },
+            {
+                data: "keterangan",
             },
             {
                 data: "action",
@@ -42,107 +41,91 @@ $(document).ready(function () {
             },
         ],
     });
-
-    $("#filter-dapil").on("change", function () {
-        table.ajax.reload()
-    })
-    $("#btn-close").on("click", function () {
-        reset()
-    })
-
-    // KETIKA TOMBOL TAMBAH DI KLIK
+    // Ketika Tombol Tambah Di Klik
     $("#btn-add-data").on("click", function () {
-        $("#modal-alternatif .modal-title").html("Tambah Alternatif")
-        $("#modal-alternatif .modal-footer").html(`<button class="btn btn-primary" id="save-alternatif">Tambah</button>`)
-        $("#modal-alternatif").modal("show")
+        $("#modal-alternatif").modal("show");
+        $("#modal-title").html("Tambah Data Alternatif")
+        $("#btn-action").html(`
+            <button class="btn btn-primary" id="btn-save">Tambah</button>
+        `)
     })
 
-    $("#modal-alternatif").on("click", "#save-alternatif", function () {
-        $("#spinner").html(loader)
-        let button = $(this)
-        $(button).attr("disabled", "true");
-        let formdata = $('form[id="form-alternatif"]').serialize();
+    $("#modal-alternatif").on("click", "#btn-save", function () {
+        let form = $("form[id='form-alternatif']").serialize();
         $.ajax({
-            data: formdata,
-            url: "/alternatif",
+            data: form,
+            url: "/alternatif-store",
             type: "POST",
             dataType: 'json',
             success: function (response) {
-                $("#spinner").html("")
-                $(button).removeAttr("disabled");
-                reset();
-                table.ajax.reload()
-                Swal.fire("Success!", response.success, "success");
-            },
-            error: function (xhr, status, error) {
-                $("#spinner").html("")
-                $(button).removeAttr("disabled");
-                if (xhr.status == 400) {
-                    let errors = xhr.responseJSON.errors
-                    displayErrors(errors)
+                if (response.errors) {
+                    displayErrors(response.errors);
+                } else {
+                    table.ajax.reload()
+                    $("#alternatif").val("")
+                    $("#keterangan").val("")
+                    $("#modal-alternatif").modal("hide");
+                    Swal.fire("Success!", response.success, "success");
                 }
             }
         });
+
     })
 
-    // AMBIL DATA DAPIL
+    $("#btn-close").on("click", function () {
+        $("#alternatif").val("")
+        $("#keterangan").val("")
+        $("#current_uuid").val("")
+        $("#modal-alternatif").modal("hide");
+    })
+
     $("#table-alternatif").on("click", ".edit-button", function () {
         let uuid = $(this).data("uuid");
-        $("#spinner").html(loader)
+        $("#current_uuid").val(uuid)
         $.ajax({
-            url: "/alternatif/" + uuid + "/edit",
+            url: "/alternatif-edit/" + uuid,
             type: "GET",
             dataType: 'json',
             success: function (response) {
-                let data = response.data
-                $("#spinner").html("")
-                $("#kode").val(data.kode)
-                $("#dapil_uuid").val(data.dapil_uuid)
-                $("#alternatif").val(data.alternatif)
-                $("#modal-alternatif .modal-title").html("Edit Alternatif")
-                $("#modal-alternatif .modal-footer").html(`<button class="btn btn-primary" id="update-alternatif" data-uuid="${uuid}">Ubah</button>`)
-                $("#modal-alternatif").modal("show")
+                $("#modal-title").html("Ubah Data Alternatif")
+                $("#btn-action").html(`
+                    <button class="btn btn-primary" id="btn-update">Ubah</button>
+                `)
+                $("#alternatif").val(response.data.alternatif)
+                $("#keterangan").val(response.data.keterangan)
+                $("#modal-alternatif").modal("show");
             }
         });
     })
 
-    // UPDATE DATA DAPIL
-    $("#modal-alternatif").on("click", "#update-alternatif", function () {
-        let uuid = $(this).data("uuid");
-        let button = $(this)
-        $(button).attr("disabled", "true");
-        $("#spinner").html(loader)
-        let formdata = $('form[id="form-alternatif"]').serialize();
+    $("#modal-alternatif").on("click", "#btn-update", function () {
+        let form = $("form[id='form-alternatif']").serialize();
         $.ajax({
-            data: formdata + "&_method=PUT",
-            url: "/alternatif/" + uuid,
+            data: form,
+            url: "/alternatif-update/" + $("#current_uuid").val(),
             type: "POST",
             dataType: 'json',
             success: function (response) {
-                $("#spinner").html("")
-                $(button).removeAttr("disabled");
-                reset();
-                table.ajax.reload()
-                Swal.fire("Success!", response.success, "success");
-            },
-            error: function (xhr, status, error) {
-                if (xhr.status == 400) {
-                    $("#spinner").html("")
-                    $(button).removeAttr("disabled");
-                    let errors = xhr.responseJSON.errors
-                    displayErrors(errors)
+                if (response.errors) {
+                    displayErrors(response.errors);
+                } else {
+                    table.ajax.reload()
+                    $("#alternatif").val("")
+                    $("#keterangan").val("")
+                    $("#current_uuid").val("")
+                    $("#modal-alternatif").modal("hide");
+                    Swal.fire("Success!", response.success, "success");
                 }
             }
         });
     })
-
     //HAPUS DATA
     $("#table-alternatif").on("click", ".delete-button", function () {
         let uuid = $(this).attr("data-uuid");
         let token = $(this).attr("data-token");
         Swal.fire({
             title: "Apakah Kamu Yakin?",
-            text: "Kamu akan menghapus alternatif!",
+            text: "Kamu akan menghapus data alternatif!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -152,10 +135,9 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     data: {
-                        _method: "DELETE",
                         _token: token,
                     },
-                    url: "/alternatif/" + uuid,
+                    url: "/alternatif-destroy/" + uuid,
                     type: "POST",
                     dataType: "json",
                     success: function (response) {
@@ -166,17 +148,6 @@ $(document).ready(function () {
             }
         });
     });
-
-    //KOSONGKAN SEMUA INPUTAN
-    function reset() {
-        let form = $("form[id='form-alternatif']").serializeArray();
-        form.map((a) => {
-            $(`#${a.name}`).val("");
-        })
-        $("#modal-alternatif .modal-title").html("")
-        $("#modal-alternatif .modal-footer").html("")
-        $("#modal-alternatif").modal("hide")
-    }
     //Hendler Error
     function displayErrors(errors) {
         // menghapus class 'is-invalid' dan pesan error sebelumnya
@@ -193,7 +164,7 @@ $(document).ready(function () {
                 '<div class="invalid-feedback ml-2"></div>'
             );
 
-            $(".btn-close").on("click", function () {
+            $("#btn-close").on("click", function () {
                 inputElement.each(function () {
                     $(this).removeClass("is-invalid");
                 });
@@ -207,7 +178,7 @@ $(document).ready(function () {
 
             $.each(messages, function (index, message) {
                 feedbackElement.append(
-                    $('<p class="p-0 m-0" style="font-style=:italic">' + message + "</p>")
+                    $('<p class="p-0 m-0 text-center">' + message + "</p>")
                 );
             });
 
@@ -252,7 +223,7 @@ $(document).ready(function () {
                 });
             });
             selectElement.each(function () {
-                selectElement.on("click", function () {
+                selectElement.on("change", function () {
                     $(this).removeClass("is-invalid");
                 });
             });

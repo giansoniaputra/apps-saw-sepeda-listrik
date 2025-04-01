@@ -2,156 +2,104 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dapil;
 use App\Models\Alternatif;
 use App\Models\Perhitungan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\PerhitunganMoora;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
 class AlternatifController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $data = [
-            'title' => 'Alternatif',
-            'dapils' => Dapil::orderBy('kode')->get()
+            'title' => 'Alternatif'
         ];
         return view('alternatif.index', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $rules = [
-            'dapil_uuid' => 'required',
-            'alternatif' => 'required',
+            'alternatif' => 'required|unique:alternatifs',
+            'keterangan' => 'required',
         ];
         $pesan = [
-            'dapil_uuid.required' => 'Dapil tidak boleh kosong',
-            'alternatif.required' => 'Alternatif tidak boleh kosong',
+            'alternatif.required' => 'Alternatif tidak boleh kosong!',
+            'alternatif.unique' => 'Alternatif sudah ada!',
+            'keterangan.required' => 'Ketarangan tidak boleh kosong!',
         ];
-        $cek = Alternatif::where("kode", $request->kode)->where('dapil_uuid', $request->dapil_uuid)->first();
-        if (!$cek) {
-            $rules['kode'] = 'required';
-            $pesan['kode.required'] = 'Kode tidak boleh kosong';
-        } else {
-            $rules['kode'] = 'required|unique:alternatifs';
-            $pesan['kode.unique'] = 'Kode sudah ada';
-            $pesan['kode.required'] = 'Kode tidak boleh kosong';
-        }
         $validator = Validator::make($request->all(), $rules, $pesan);
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()])->setStatusCode(400);
+            return response()->json(['errors' => $validator->errors()]);
         } else {
-            $alternatif = new Alternatif($request->all());
-            $alternatif->uuid = Str::orderedUuid();
-            $alternatif->save();
-            return response()->json(['success' => 'Data Alternatif Berhasil Ditambahkan!']);
+            $data = [
+                'uuid' => Str::orderedUuid(),
+                'alternatif' => $request->alternatif,
+                'keterangan' => $request->keterangan,
+            ];
+            Alternatif::create($data);
+            return response()->json(['success' => 'Alternatif Berhasi Di Buat!']);
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Alternatif $alternatif)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Alternatif $alternatif)
     {
         return response()->json(['data' => $alternatif]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Alternatif $alternatif)
+    public function update(Alternatif $alternatif, Request $request)
     {
         $rules = [
-            'dapil_uuid' => 'required',
             'alternatif' => 'required',
+            'keterangan' => 'required',
         ];
         $pesan = [
-            'dapil_uuid.required' => 'Dapil tidak boleh kosong',
-            'alternatif.required' => 'Alternatif tidak boleh kosong',
+            'alternatif.required' => 'Alternatif tidak boleh kosong!',
+            'keterangan.required' => 'Ketarangan tidak boleh kosong!',
         ];
-        $cek = Alternatif::where("kode", $request->kode)->where('dapil_uuid', $request->dapil_uuid)->first();
-        $cekDapil = Alternatif::where('dapil_uuid', $request->dapil_uuid)->first();
-        $cekKode = Alternatif::where('kode', $request->kode)->first();
-        if ($cek) {
-            if ($cek->kode != $alternatif->kode && $cek->dapil_uuid == $alternatif->dapil_uuid) {
-                $rules['kode'] = 'required|unique:alternatifs';
-                $pesan['kode.unique'] = 'Kode sudah ada';
-                $pesan['kode.required'] = 'Kode tidak boleh kosong';
-            } else if ($cek->kode == $alternatif->kode && $cek->dapil_uuid != $alternatif->dapil_uuid) {
-                $rules['kode'] = 'required|unique:alternatifs';
-                $pesan['kode.unique'] = 'Kode sudah ada';
-                $pesan['kode.required'] = 'Kode tidak boleh kosong';
-            } else if ($cek->kode != $alternatif->kode && $cek->dapil_uuid != $alternatif->dapil_uuid) {
-                $rules['kode'] = 'required|unique:alternatifs';
-                $pesan['kode.unique'] = 'Kode sudah ada';
-                $pesan['kode.required'] = 'Kode tidak boleh kosong';
-            }
+        $cek = Alternatif::where('uuid', $request->uuid)->first();
+        if ($cek->alternatif == $request->alternatif) {
+            $rules['alternatif'] = 'required';
+            $pesan['alternatif.required'] = 'alternatif tidak boleh kosong';
         } else {
-            $rules['kode'] = 'required';
-            $pesan['kode.required'] = 'Kode tidak boleh kosong';
+            $rules['alternatif'] = 'required|unique:alternatifs';
+            $pesan['alternatif.unique'] = 'alternatif sudah ada';
+            $pesan['alternatif.required'] = 'alternatif tidak boleh kosong';
         }
         $validator = Validator::make($request->all(), $rules, $pesan);
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()])->setStatusCode(400);
+            return response()->json(['errors' => $validator->errors()]);
         } else {
-            $alternatif->fill($request->all());
-            $alternatif->save();
-            return response()->json(['success' => 'Data Alternatif Berhasil Diubah!']);
+            $data = [
+                'alternatif' => $request->alternatif,
+                'keterangan' => $request->keterangan,
+            ];
+            Alternatif::where('uuid', $alternatif->uuid)->update($data);
+            return response()->json(['success' => 'Alternatif Berhasi Di Ubah!']);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Alternatif $alternatif)
     {
         Alternatif::destroy($alternatif->id);
-        $perhitungan = Perhitungan::where('alternatif_uuid', $alternatif->uuid);
-        if ($perhitungan->first()) {
-            $perhitungan->delete();
-        }
-        return response()->json(['success' => 'Data Alternatif Berhasil Dihapus!']);
+        Perhitungan::where('alternatif_uuid', $alternatif->uuid)->delete();
+        return response()->json(['success' => 'Alternatif Berhasil Di Hapus!']);
     }
 
-    public function dataTables(Request $request)
+    public function dataTablesAlternatif()
     {
-        $query = DB::table('alternatifs as a')
-            ->join('dapils as b', 'a.dapil_uuid', '=', 'b.uuid', 'left')
-            ->select('a.*', 'b.kode as bkode', 'b.daerah')
-            ->where('a.dapil_uuid', $request->dapil_uuid)
-            ->orderBy('a.kode')
-            ->get();
+        $query = Alternatif::all();
+        foreach ($query as $row) {
+            $row->alternatif = "A" . $row->alternatif;
+        }
         return DataTables::of($query)->addColumn('action', function ($row) {
             $actionBtn =
                 '
-                <button class="btn btn-rounded btn-sm btn-warning text-dark edit-button" title="Edit Data" data-uuid="' . $row->uuid . '"><i class="ri-edit-2-line"></i></i></button>
-                <button class="btn btn-rounded btn-sm btn-danger text-white delete-button" title="Hapus Data" data-uuid="' . $row->uuid . '" data-token="' . csrf_token() . '"><i class=" ri-delete-bin-6-fill"></i></i></button>';
+                <button class="btn btn-rounded btn-sm btn-warning text-dark edit-button" title="Edit Data" data-uuid="' . $row->uuid . '"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-rounded btn-sm btn-danger text-white delete-button" title="Hapus Data" data-uuid="' . $row->uuid . '" data-token="' . csrf_token() . '"><i class="fas fa-trash-alt"></i></button>';
             return $actionBtn;
         })->make(true);
     }

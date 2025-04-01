@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,7 +17,7 @@ class AuthController extends Controller
         return view('auth.index');
     }
 
-    public function authenticate(Request $request)
+    public function authenticate(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
             'username' => 'required',

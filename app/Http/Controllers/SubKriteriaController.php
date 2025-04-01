@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SubKriteria;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
 class SubKriteriaController extends Controller
@@ -32,12 +33,10 @@ class SubKriteriaController extends Controller
     {
         $rules = [
             'sub_kriteria' => 'required',
-            'atribut' => 'required',
             'bobot' => 'required',
         ];
         $pesan = [
             'sub_kriteria.required' => 'Sub Kriseria Tidak Boleh Kosong',
-            'atribut.required' => 'Atribut Tidak Boleh Kosong',
             'bobot.required' => 'Bobot Tidak Boleh Kosong',
         ];
 
@@ -49,7 +48,6 @@ class SubKriteriaController extends Controller
                 'uuid' => Str::orderedUuid(),
                 'kriteria_uuid' => $request->kriteria_uuid,
                 'sub_kriteria' => $request->sub_kriteria,
-                'atribut' => $request->atribut,
                 'bobot' => $request->bobot,
             ];
             SubKriteria::create($data);
@@ -81,12 +79,10 @@ class SubKriteriaController extends Controller
     {
         $rules = [
             'sub_kriteria' => 'required',
-            'atribut' => 'required',
             'bobot' => 'required',
         ];
         $pesan = [
             'sub_kriteria.required' => 'Sub Kriseria Tidak Boleh Kosong',
-            'atribut.required' => 'Atribut Tidak Boleh Kosong',
             'bobot.required' => 'Bobot Tidak Boleh Kosong',
         ];
 
@@ -96,7 +92,6 @@ class SubKriteriaController extends Controller
         } else {
             $data = [
                 'sub_kriteria' => $request->sub_kriteria,
-                'atribut' => $request->atribut,
                 'bobot' => $request->bobot,
             ];
             SubKriteria::where('uuid', $request->current_uuid)->update($data);
@@ -111,5 +106,17 @@ class SubKriteriaController extends Controller
     {
         SubKriteria::where('uuid', $request->uuid)->delete();
         return response()->json(['success' => "Data Berhaswi Di hapus"]);
+    }
+
+    public function dataTablesSubKriteria(Request $request)
+    {
+        $query = SubKriteria::where('kriteria_uuid', $request->kriteria_uuid)->get();
+        return DataTables::of($query)->addColumn('action', function ($row) {
+            $actionBtn =
+                '
+                <button class="btn btn-rounded btn-sm btn-warning text-dark edit-button" title="Edit Data" data-uuid="' . $row->uuid . '"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-rounded btn-sm btn-danger text-white delete-button" title="Hapus Data" data-uuid="' . $row->uuid . '" data-token="' . csrf_token() . '"><i class="fas fa-trash-alt"></i></button>';
+            return $actionBtn;
+        })->make(true);
     }
 }

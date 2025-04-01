@@ -2,33 +2,28 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <title>{{ $title }} | SPK SAW</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-    <meta content="Coderthemes" name="author" />
 
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <!-- Datatables css -->
-    <link href="/assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <title>{{ $title }} | SMK Bhakti Pertiwi</title>
 
-    <!-- Theme Config Js -->
-    <script src="/assets/js/config.js"></script>
+    <!-- Custom fonts for this template -->
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/sweetalert2.min.css">
+    <!-- Theme style -->
+    <script src="/assets/jquery-3.7.1.min.js"></script>
     <script src="/assets/sweetalert2.all.min.js"></script>
-
-    <!-- App css -->
-    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
-    <link href="/assets/sweetalert2.min.css" rel="stylesheet" type="text/css" id="app-style" />
-    <meta name="csrfToken" content="{{ csrf_token() }}">
-    <!-- Icons css -->
-    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     <style>
         .spinner {
             width: 56px;
@@ -76,303 +71,162 @@
             background-color: rgba(0, 0, 0, 0.3);
         }
 
+        .modal-header {
+            background-color: #1A2942;
+            color: white;
+        }
+
+        .btn-close {
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .modal-body {
+            background-color: white;
+        }
+
+        .modal-body input,
+        .modal-body select,
+        .modal-body textarea {
+            border: 1px solid #1A2942 !important;
+        }
+
     </style>
     <script>
         const loader = `
             <div class="card d-flex justify-conten-center align-items-center card-spinner">
                 <div class="spinner" style="position:relative;z-index: 101;"></div>
             </div>`;
-        const csrfToken = document.querySelector("meta[name='csrfToken']").getAttribute('content');
 
     </script>
+
 </head>
 
-<body>
-    <div id="spinner"></div>
-    <!-- Begin page -->
-    <div class="wrapper">
+<body id="page-top">
 
+    <!-- Page Wrapper -->
+    <div id="wrapper">
 
-        <!-- ========== Topbar Start ========== -->
-        <div class="navbar-custom">
-            <div class="topbar container-fluid d-flex justify-content-beetwen">
-                <button class="button-toggle-menu">
-                    <i class="ri-menu-2-fill"></i>
-                </button>
-                <ul class="topbar-menu d-flex align-items-center gap-3">
-                    <li class="dropdown me-md-2">
-                        <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                            <span class="account-user-avatar">
-                                <img src="/assets/images/users/avatar-1.jpg" alt="user-image" width="32" class="rounded-circle">
-                            </span>
-                            <span class="d-lg-flex flex-column gap-1 d-none">
-                                <h5 class="my-0">{{ auth()->user()->name }}</h5>
-                                <h6 class="my-0 fw-normal">{{ auth()->user()->role }}</h6>
-                            </span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
-
-                            <!-- item-->
-                            <button class="dropdown-item logout">
-                                <i class="ri-logout-box-fill align-middle me-1"></i>
-                                <span>Logout</span>
-                            </button>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- ========== Topbar End ========== -->
-
+        <!-- Sidebar -->
         @include('layouts.sidebar')
+        <!-- End of Sidebar -->
 
-        <!-- ============================================================== -->
-        <!-- Start Page Content here -->
-        <!-- ============================================================== -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
-        <div class="content-page">
-            <div class="content">
+            <!-- Main Content -->
+            <div id="content">
 
-                <!-- Start Content-->
-                <div class="container-fluid">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
 
-                    <!-- start page title -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
-                                <h4 class="page-title">{{ $title }}</h4>
+                        @if(auth()->check())
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ auth()->user()->name }}</span>
+                                <img class="img-profile rounded-circle" src="/assets/img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item logout" href="/logout">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                    <!-- end page title -->
-                    @yield('container')
-                </div> <!-- container -->
+                        </li>
+                        @endif
 
-            </div> <!-- content -->
+                    </ul>
 
-            <!-- Footer Start -->
-            <footer class="footer">
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div id="spinner"></div>
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <script>
-                                document.write(new Date().getFullYear())
+                    <h2 class="mb-2">{{ $title }}</h2>
+                    @yield('container')
 
-                            </script> © Aulia
-                        </div>
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; <span id="current-year"></span></span>
+                        <script>
+                            // Mendapatkan tahun saat ini
+                            const currentYear = new Date().getFullYear();
+
+                            // Menampilkan tahun saat ini di elemen HTML
+                            document.getElementById('current-year').textContent = currentYear;
+
+                        </script>
                     </div>
                 </div>
             </footer>
-            <!-- end Footer -->
+            <!-- End of Footer -->
 
         </div>
-
-        <!-- ============================================================== -->
-        <!-- End Page content -->
-        <!-- ============================================================== -->
+        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- END wrapper -->
+    <!-- End of Page Wrapper -->
 
-    <!-- Theme Settings -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
-        <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
-            <h5 class="text-white m-0">Theme Settings</h5>
-            <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-        <div class="offcanvas-body p-0">
-            <div data-simplebar class="h-100">
-                <div class="card mb-0 p-3">
-                    <div class="alert alert-warning" role="alert">
-                        <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
-                    </div>
-
-                    <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
-                    <div class="d-flex flex-column gap-2">
-                        <div class="form-check form-switch">
-                            <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical" class="form-check-input">
-                            <label class="form-check-label" for="customizer-layout01">Vertical</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal" class="form-check-input">
-                            <label class="form-check-label" for="customizer-layout02">Horizontal</label>
-                        </div>
-                    </div>
-
-                    <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
-
-                    <div class="d-flex flex-column gap-2">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light" value="light">
-                            <label class="form-check-label" for="layout-color-light">Light</label>
-                        </div>
-
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark" value="dark">
-                            <label class="form-check-label" for="layout-color-dark">Dark</label>
-                        </div>
-                    </div>
-
-                    <div id="layout-width">
-                        <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
-
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-fluid" value="fluid">
-                                <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
-                            </div>
-
-                            <div id="layout-boxed">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-boxed" value="boxed">
-                                    <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
-                                </div>
-                            </div>
-
-                            <div id="layout-detached">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="data-layout-mode" id="data-layout-detached" value="detached">
-                                    <label class="form-check-label" for="data-layout-detached">Detached</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
-
-                    <div class="d-flex flex-column gap-2">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-light" value="light">
-                            <label class="form-check-label" for="topbar-color-light">Light</label>
-                        </div>
-
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-dark" value="dark">
-                            <label class="form-check-label" for="topbar-color-dark">Dark</label>
-                        </div>
-
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-brand" value="brand">
-                            <label class="form-check-label" for="topbar-color-brand">Brand</label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
-
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-light" value="light">
-                                <label class="form-check-label" for="leftbar-color-light">Light</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-dark" value="dark">
-                                <label class="form-check-label" for="leftbar-color-dark">Dark</label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-brand" value="brand">
-                                <label class="form-check-label" for="leftbar-color-brand">Brand</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="sidebar-size">
-                        <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
-
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-default" value="default">
-                                <label class="form-check-label" for="leftbar-size-default">Default</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-compact" value="compact">
-                                <label class="form-check-label" for="leftbar-size-compact">Compact</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-small" value="condensed">
-                                <label class="form-check-label" for="leftbar-size-small">Condensed</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-small-hover" value="sm-hover">
-                                <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-full" value="full">
-                                <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-fullscreen" value="fullscreen">
-                                <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="layout-position">
-                        <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
-
-                        <div class="btn-group checkbox" role="group">
-                            <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed" value="fixed">
-                            <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
-
-                            <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-scrollable" value="scrollable">
-                            <label class="btn btn-soft-primary w-sm ms-0" for="layout-position-scrollable">Scrollable</label>
-                        </div>
-                    </div>
-
-                    <div id="sidebar-user">
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
-                            <div class="form-check form-switch">
-                                <input type="checkbox" class="form-check-input" name="sidebar-user" id="sidebaruser-check">
-                            </div>
-                        </div>
-                    </div>
-
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
-            </div>
-
-        </div>
-        <div class="offcanvas-footer border-top p-3 text-center">
-            <div class="row">
-                <div class="col-6">
-                    <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
-                </div>
-                <div class="col-6">
-                    <a href="#" role="button" class="btn btn-primary w-100">Buy Now</a>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Vendor js -->
-    <script src="/assets/js/vendor.min.js"></script>
+    <!-- Bootstrap core JavaScript-->
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Datatables js -->
-    <script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
-    <script src="/assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
-    <script src="/assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-    <script src="/assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="/assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
-    <script src="/assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="/assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
-    <script src="/assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="/assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
-    <script src="/assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    @yield('js_after')
+    <!-- Custom scripts for all pages-->
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
         let logout = document.querySelector('.logout')
         logout.addEventListener('click', function() {
+            let unique = $(this).attr("data-unique");
+            let token = $(this).attr("data-token");
             Swal.fire({
                 title: "Apakah Kamu Yakin?"
                 , text: "Anda akan keluar!"
@@ -389,8 +243,7 @@
         })
 
     </script>
-    <!-- App js -->
-    <script src="/assets/js/app.min.js"></script>
 
 </body>
+
 </html>

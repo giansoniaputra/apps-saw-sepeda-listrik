@@ -2,51 +2,48 @@
 @section('container')
 <div class="row">
     <div class="col-sm-4">
-        <div class="card widget-icon-box">
+        <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="flex-grow-1 overflow-hidden">
-                        <h5 class="text-muted text-uppercase fs-13 mt-0" title="Number of Customers">Jumlah Dapil</h5>
-                        <h3 class="my-3">{{ $dapil }}</h3>
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Alternatif</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $alternatif }}</div>
                     </div>
-                    <div class="avatar-sm flex-shrink-0">
-                        <span class="avatar-title text-bg-primary rounded rounded-3 fs-3 widget-icon-box-avatar shadow">
-                            <i class="ri-map-pin-fill"></i>
-                        </span>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-sm-4">
-        <div class="card widget-icon-box">
+        <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="flex-grow-1 overflow-hidden">
-                        <h5 class="text-muted text-uppercase fs-13 mt-0" title="Number of Customers">Jumlah Calon Legistalif</h5>
-                        <h3 class="my-3">{{ $alternatif }}</h3>
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Kriteria</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $kriteria }}</div>
                     </div>
-                    <div class="avatar-sm flex-shrink-0">
-                        <span class="avatar-title text-bg-success rounded rounded-3 fs-3 widget-icon-box-avatar shadow">
-                            <i class="ri-group-line"></i>
-                        </span>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-sm-4">
-        <div class="card widget-icon-box">
+        <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="flex-grow-1 overflow-hidden">
-                        <h5 class="text-muted text-uppercase fs-13 mt-0" title="Number of Customers">Jumlah Kriteria</h5>
-                        <h3 class="my-3">{{ $kriteria }}</h3>
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Perhitungan</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $alternatif }}</div>
                     </div>
-                    <div class="avatar-sm flex-shrink-0">
-                        <span class="avatar-title text-bg-warning rounded rounded-3 fs-3 widget-icon-box-avatar shadow">
-                            <i class="ri-pie-chart-line"></i>
-                        </span>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>

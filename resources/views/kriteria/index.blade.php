@@ -16,7 +16,7 @@
                         <th>Kode</th>
                         <th>Kriteria</th>
                         <th>Atribut</th>
-                        <th>Bobot(%)</th>
+                        <th>Bobot</th>
                         <th>Action</th>
                     </thead>
                     <tbody>
@@ -28,7 +28,5 @@
 </div>
 @include('kriteria.modal-kriteria')
 @include('kriteria.modal-sub-kriteria')
-@endsection
-@section('js_after')
 <script src="/ex-script/kriteria.js"></script>
 @endsection

@@ -2,131 +2,177 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <title>LOGIN | SPK SAW</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-    <meta content="Coderthemes" name="author" />
 
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <!-- Theme Config Js -->
-    <script src="/assets/js/config.js"></script>
+    <title>PEMILIHAN SPEDA LISTRIK | SPK SAW</title>
 
-    <!-- App css -->
-    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    <!-- Custom fonts for this template-->
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
-    <!-- Icons css -->
-    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- Custom styles for this template-->
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+
 </head>
 
-<body class="authentication-bg position-relative">
-    <div class="position-absolute start-0 end-0 start-0 bottom-0 w-100 h-100">
-        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 1920 1024">
-            <g mask="url(&quot;#SvgjsMask1046&quot;)" fill="none">
-                <rect width="1920" height="1024" x="0" y="0" fill="url(#SvgjsLinearGradient1047)"></rect>
-                <path d="M1920 0L1864.16 0L1920 132.5z" fill="rgba(255, 255, 255, .1)"></path>
-                <path d="M1864.16 0L1920 132.5L1920 298.4L1038.6100000000001 0z" fill="rgba(255, 255, 255, .075)"></path>
-                <path d="M1038.6100000000001 0L1920 298.4L1920 379.53999999999996L857.7000000000002 0z" fill="rgba(255, 255, 255, .05)"></path>
-                <path d="M857.7 0L1920 379.53999999999996L1920 678.01L514.57 0z" fill="rgba(255, 255, 255, .025)"></path>
-                <path d="M0 1024L939.18 1024L0 780.91z" fill="rgba(0, 0, 0, .1)"></path>
-                <path d="M0 780.91L939.18 1024L1259.96 1024L0 585.71z" fill="rgba(0, 0, 0, .075)"></path>
-                <path d="M0 585.71L1259.96 1024L1426.79 1024L0 408.19000000000005z" fill="rgba(0, 0, 0, .05)"></path>
-                <path d="M0 408.19000000000005L1426.79 1024L1519.6599999999999 1024L0 404.09000000000003z" fill="rgba(0, 0, 0, .025)"></path>
-            </g>
-            <defs>
-                <mask id="SvgjsMask1046">
-                    <rect width="1920" height="1024" fill="#ffffff"></rect>
-                </mask>
-                <linearGradient x1="11.67%" y1="-21.87%" x2="88.33%" y2="121.88%" gradientUnits="userSpaceOnUse" id="SvgjsLinearGradient1047">
-                    <stop stop-color="#0e2a47" offset="0"></stop>
-                    <stop stop-color="#00459e" offset="1"></stop>
-                </linearGradient>
-            </defs>
-        </svg>
-    </div>
-    <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-xxl-4 col-lg-5">
-                    <div class="card">
+<body class="" style="background-color: rgb(52, 31, 151)">
 
-                        <!-- Logo -->
-                        <div class="card-header pt-4 text-center">
-                            <div class="auth-brand mb-0">
-                                <a href="#" class="logo-dark">
-                                    <span class="d-flex align-items-center justify-content-center"><img src="/assets/logo.png" alt="dark logo" height="28">&nbsp;<h3 class="d-inline pt-2">DEMOKRAT</h3></span>
-                                </a>
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row ">
+
+            <div class="col-sm-12 d-flex justify-content-center align-items-center">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        {{-- <img src="/assets/img/logo.png" height="100" alt=""> --}}
+
+                                        <h2 class="mt-4 h4 text-gray-900 mb-4">Aplikasi Rekomendasi Pemilihan Sepeda
+                                            Listrik </h2>
+                                        <h4>LOGIN</h4>
+
+                                    </div>
+                                    <form action="/authenticate" method="post" class="user">
+                                        @csrf
+                                        <div class="form-group">
+                                            <input type="text"
+                                                class="form-control form-control-user @error('username') is-invalid @enderror"
+                                                id="username" name="username" placeholder="Masukan Username">
+                                            @error('username')
+                                                <div class="invalid-feedback"><small>{{ $message }}</small></div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password"
+                                                class="form-control form-control-user @error('password') is-invalid @enderror"
+                                                id="password" name="password" placeholder="Masukan Password">
+                                            @error('password')
+                                                <div class="invalid-feedback"><small>{{ $message }}</small></div>
+                                            @enderror
+                                        </div>
+                                        <button type="sumbit" class="btn btn-primary btn-user btn-block">
+                                            Login
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="card-body p-4">
-
-                            <div class="text-center w-75 m-auto">
-                                <h4 class="text-dark-50 text-center pb-0">Sign In</h4>
-                            </div>
-                            @if(session()->has('error'))
-                            <div class="alert alert-danger alert-dismissible text-bg-danger border-0 fade show" role="alert">
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-                                <strong>Error - </strong> {{ session('error') }}
-                            </div>
-                            @endif
-
-                            <form action="/authenticate" method="post">
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Username</label>
-                                    <input value="{{ old('username') }}" class="form-control @error('username') is-invalid @enderror" type="text" id="username" name="username" placeholder="Masukan Username">
-                                    @error('username')
-                                    <div class="invalid-feedback">
-                                        <small class="text-danger">{{ $message }}</small>
-                                    </div>
-                                    @enderror
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <div class="input-group input-group-merge">
-                                        <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Enter your password">
-                                    </div>
-                                    @error('password')
-                                    <div class="">
-                                        <small class="text-danger">{{ $message }}</small>
-                                    </div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3 mb-0 text-center">
-                                    <button class="btn btn-primary" type="submit"> Log In </button>
-                                </div>
-
-                            </form>
-                        </div> <!-- end card-body -->
                     </div>
-                    <!-- end card -->
-                    <!-- end row -->
+                </div>
 
-                </div> <!-- end col -->
             </div>
-            <!-- end row -->
+
         </div>
-        <!-- end container -->
+
     </div>
-    <!-- end page -->
 
-    <footer class="footer footer-alt">
-        <span class="text-white-50">
-            <script>
-                document.write(new Date().getFullYear())
+    <!-- Bootstrap core JavaScript-->
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-            </script> © Aulia
-        </span>
-    </footer>
-    <!-- Vendor js -->
-    <script src="/assets/js/vendor.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- App js -->
-    <script src="/assets/js/app.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="/assets/js/sb-admin-2.min.js"></script>
 
 </body>
+
 </html>
+{{-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Log in</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/assets/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="/assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/assets/css/adminlte.min.css">
+</head>
+
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <img src="/assets/img/AdminLTELogo.png" alt="" width="70vh" class="img-fluid rounded-circle">
+            <a href=""><b>Waroeng SS</b></a>
+        </div>
+        <!-- /.login-logo -->
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Login</p>
+                @if (session()->has('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <small>{{ session('error') }}</small>
+<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+</button>
+</div>
+@endif
+
+<form action="/authenticate" method="post">
+    @csrf
+    <div class="input-group mb-3">
+        <input type="text" class="form-control @error('username') is-invalid @enderror" placeholder="Username" name="username">
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+            </div>
+        </div>
+        @error('username')
+        <div class="invalid-feedback"><small>{{ $message }}</small></div>
+        @enderror
+    </div>
+    <div class="input-group mb-3">
+        <input type="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password" name="password">
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+            </div>
+        </div>
+        @error('password')
+        <div class="invalid-feedback"><small>{{ $message }}</small></div>
+        @enderror
+    </div>
+    <div class="row">
+        <!-- /.col -->
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        </div>
+        <!-- /.col -->
+    </div>
+</form>
+</div>
+<!-- /.login-card-body -->
+</div>
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="/assets/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/assets/js/adminlte.min.js"></script>
+</body>
+
+</html> --}}

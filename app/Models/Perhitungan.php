@@ -9,6 +9,7 @@ class Perhitungan extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+    protected $table = 'perhitungans';
 
     public function getRouteKeyName()
     {

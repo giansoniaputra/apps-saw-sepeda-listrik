@@ -1,97 +1,73 @@
-<!-- ========== Left Sidebar Start ========== -->
-<div class="leftside-menu">
+<!-- Sidebar -->
+<ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color: rgb(34, 47, 62)">
 
-    <!-- Brand Logo Light -->
-    <a href="/" class="logo logo-light">
-        <span class="logo-lg">
-            <img src="/assets/logo.png" alt="logo">
-            <h3>DEMOKRAT</h3>
-        </span>
-        <span class="logo-sm">
-            <img src="/assets/logo.png" alt="small logo">
-            <h3>DEMOKRAT</h3>
-        </span>
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-icon rotate-n-15">
+            {{-- <i class="fas fa-laugh-wink"></i> --}}
+        </div>
+        <img src="/assets/img/logo.png" height="40" alt="">
+        <div class="sidebar-brand-text mx-3">SMK Bhakti Pertiwi</div>
     </a>
 
-    <!-- Brand Logo Dark -->
-    <a href="/" class="logo logo-dark">
-        <span class="logo-lg">
-            <img src="/assets/logo.png" alt="dark logo">
-            <h3>DEMOKRAT</h3>
-        </span>
-        <span class="logo-sm">
-            <img src="/assets/logo.png" alt="small logo">
-            <h3>DEMOKRAT</h3>
-        </span>
-    </a>
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
 
-    <!-- Sidebar Hover Menu Toggle Button -->
-    <div class="button-sm-hover" data-bs-toggle="tooltip" data-bs-placement="right" title="Show Full Sidebar">
-        <i class="ri-checkbox-blank-circle-line align-middle"></i>
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item">
+        <a class="nav-link" href="/">
+            {{-- <i class="fas fa-fw fa-tachometer-alt"></i> --}}
+            <span>Dashboard</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Main
     </div>
 
-    <!-- Full Sidebar Menu Close Button -->
-    <div class="button-close-fullsidebar">
-        <i class="ri-close-fill align-middle"></i>
-    </div>
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            {{-- <i class="fas fa-fw fa-cog"></i> --}}
+            <span>Master</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Kriteria & Alternatif</h6>
+                <a class="collapse-item" href="/kriteria">Kriteria</a>
+                <a class="collapse-item" href="/alternatif">Alternatif</a>
+            </div>
+        </div>
+    </li>
 
-    <!-- Sidebar -left -->
-    <div class="h-100" id="leftside-menu-container" data-simplebar>
-        <ul class="side-nav">
+    <!-- Nav Item - Utilities Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+            {{-- <i class="fas fa-fw fa-calculator"></i> --}}
+            <span>Perhitungan</span>
+        </a>
+        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Perhitungan SAW:</h6>
+                <a class="collapse-item" href="/saw">SAW</a>
+            </div>
+        </div>
+    </li>
+    <!-- Nav Item - Utilities Collapse Menu -->
+    {{-- <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities2" aria-expanded="true" aria-controls="collapseUtilities">
+            <i class="fas fa-fw fa-user"></i>
+            <span>User</span>
+        </a>
+        <div id="collapseUtilities2" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">User Baru</h6>
+                <a class="collapse-item" href="/register">Add User</a>
+            </div>
+        </div>
+    </li> --}}
 
-            <li class="side-nav-title mt-1"> Main</li>
-
-            <li class="side-nav-item">
-                <a href="/" class="side-nav-link">
-                    <i class="ri-dashboard-2-fill"></i>
-                    <span> Dashboard </span>
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarEmail" aria-expanded="false" aria-controls="sidebarEmail" class="side-nav-link">
-                    <i class="ri-mail-fill"></i>
-                    <span> Master </span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="sidebarEmail">
-                    <ul class="side-nav-second-level">
-                        <li>
-                            <a href="/kriteria">Kriteria</a>
-                            <a href="/dapil">Daerah Pilihan</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="side-nav-item">
-                <a href="/alternatif" class="side-nav-link">
-                    <i class="ri-dashboard-2-fill"></i>
-                    <span> Alternatif </span>
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarPenentuan" aria-expanded="false" aria-controls="sidebarPenentuan" class="side-nav-link">
-                    <i class="ri-mail-fill"></i>
-                    <span> Pengambilan Keputusan </span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="sidebarPenentuan">
-                    <ul class="side-nav-second-level">
-                        <li>
-                            @php
-                            $dapil = getDapil();
-                            @endphp
-                            @foreach ($dapil as $row)
-                            <a href="/perhitungan/{{ $row->uuid }}">Dapil {{ $row->kode }}</a>
-                            @endforeach
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-        </ul>
-        <!--- End Sidemenu -->
-
-        <div class="clearfix"></div>
-    </div>
-</div>
-<!-- ========== Left Sidebar End ========== -->
+</ul>

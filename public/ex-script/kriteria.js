@@ -28,7 +28,7 @@ $(document).ready(function () {
         ],
         columnDefs: [
             {
-                targets: [3], // index kolom atau sel yang ingin diatur
+                targets: [4], // index kolom atau sel yang ingin diatur
                 className: "text-center", // kelas CSS untuk memposisikan isi ke tengah
             },
             {
@@ -65,9 +65,6 @@ $(document).ready(function () {
                 data: "sub_kriteria",
             },
             {
-                data: "atribut",
-            },
-            {
                 data: "bobot",
             },
             {
@@ -78,7 +75,7 @@ $(document).ready(function () {
         ],
         columnDefs: [
             {
-                targets: [4], // index kolom atau sel yang ingin diatur
+                targets: [3], // index kolom atau sel yang ingin diatur
                 className: "text-center", // kelas CSS untuk memposisikan isi ke tengah
             },
         ],
@@ -103,14 +100,12 @@ $(document).ready(function () {
     $("#btn-close-sub").on("click", function () {
         $("#sub_kriteria").val("")
         $("#bobot-sub").val("")
-        $("#atribut").val("")
         $("#btn-action").html("")
     })
     // PROSES SIMPAN KRITERIA
     $("#modal-kriteria").on("click", "#btn-save", function () {
         let button = $(this)
         button.attr('disabled', "true");
-        $("#spinner").html(loader)
         $.ajax({
             data: $("form[id='form-kriteria']").serialize(),
             url: "/kriteria",
@@ -118,11 +113,9 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 if (response.errors) {
-                    $("#spinner").html("")
                     displayErrors(response.errors);
                     button.removeAttr('disabled');
                 } else {
-                    $("#spinner").html("")
                     table.ajax.reload()
                     button.removeAttr('disabled');
                     $("#kode").val("")
@@ -148,11 +141,10 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 console.log(response.data);
-                $("#atribut").val(response.data.atribut)
                 $("#kode").val(response.data.kode)
                 $("#kriteria").val(response.data.kriteria)
+                $("#atribut").val(response.data.atribut)
                 $("#bobot").val(response.data.bobot)
-                $("#modal-title").html('Edit Kriteria')
                 $("#btn-action").html(`<button type="button" class="btn btn-primary" id="btn-update">Ubah</button>`)
             }
         });
@@ -163,7 +155,6 @@ $(document).ready(function () {
     $("#modal-kriteria").on("click", "#btn-update", function () {
         let button = $(this)
         button.attr('disabled', 'true')
-        $("#spinner").html(loader)
         $.ajax({
             data: $("form[id='form-kriteria']").serialize() + '&_method=PUT&uuid=' + $("#uuid").val(),
             url: "/kriteria/" + $("#uuid").val(),
@@ -172,11 +163,9 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response);
                 if (response.errors) {
-                    $("#spinner").html("")
                     displayErrors(response.errors);
                     button.removeAttr('disabled');
                 } else {
-                    $("#spinner").html("")
                     table.ajax.reload()
                     button.removeAttr('disabled');
                     $("#kode").val("")
@@ -207,7 +196,6 @@ $(document).ready(function () {
             confirmButtonText: "Yes, Hapus!",
         }).then((result) => {
             if (result.isConfirmed) {
-                $("#spinner").html(loader)
                 $.ajax({
                     data: {
                         _method: "DELETE",
@@ -218,7 +206,6 @@ $(document).ready(function () {
                     type: "POST",
                     dataType: "json",
                     success: function (response) {
-                        $("#spinner").html("")
                         table.ajax.reload();
                         Swal.fire("Deleted!", response.success, "success");
                     },
@@ -238,7 +225,6 @@ $(document).ready(function () {
 
     // KETIKA TOMBOL TAMBAH SUB DI KLIK
     $("#modal-sub-kriteria").on("click", "#btn-add-sub", function () {
-        $("#spinner").html(loader)
         $.ajax({
             data: $('form[id="form-sub-kriteria"]').serialize() + '&kriteria_uuid=' + $("#kriteria_uuid").val(),
             url: "/subKriteria",
@@ -246,13 +232,10 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 if (response.errors) {
-                    $("#spinner").html("")
                     displayErrors(response.errors)
                 } else {
-                    $("#spinner").html("")
                     $("#sub_kriteria").val("")
                     $("#bobot-sub").val("")
-                    $("#atribut").val("")
                     table2.ajax.reload()
                 }
             }
@@ -260,7 +243,6 @@ $(document).ready(function () {
     })
     // AMBIL DATA YANG AKAN DI EDIT
     $("#table-sub-kriteria").on("click", ".edit-button", function () {
-        $("#spinner").html(loader)
         let uuid = $(this).data("uuid");
         $("#current_uuid_sub").val(uuid)
         $.ajax({
@@ -269,19 +251,16 @@ $(document).ready(function () {
             type: "GET",
             dataType: 'json',
             success: function (response) {
-                $("#spinner").html("")
                 $("#sub_kriteria").focus()
                 $("#sub_kriteria").val(response.data.sub_kriteria);
                 $("#bobot-sub").val(response.data.bobot);
-                $("#atribut").val(response.data.atribut);
-                $("#btn-action-add-sub").html(`<button class="btn btn-warning text-white btn-md me-2" id="btn-update-sub">Update Sub Kriteria</button><button class="btn btn-danger btn-md" id="btn-batal-update">Batal</button>`)
+                $("#btn-action-add-sub").html(`<button class="btn btn-warning text-white btn-md mr-2" id="btn-update-sub">Update Sub Kriteria</button><button class="btn btn-danger btn-md" id="btn-batal-update"><i class="far fa-times-circle"></i></button>`)
 
             }
         });
     })
     // UPDATE SUB KRITERIA
     $("#modal-sub-kriteria").on("click", "#btn-update-sub", function () {
-        $("#spinner").html(loader)
         let form = $("#form-sub-kriteria").serialize();
         $.ajax({
             data: form + '&_method=PUT',
@@ -289,12 +268,10 @@ $(document).ready(function () {
             type: "POST",
             dataType: 'json',
             success: function (response) {
-                $("#spinner").html("")
                 $("#btn-action-add-sub").html(`<button class="btn btn-primary btn-md" id="btn-add-sub">Tambah Sub Kriteria</button>`)
                 $("#sub_kriteria").val("")
                 $("#current_uuid_sub").val("")
                 $("#bobot-sub").val("")
-                $("#atribut").val("")
                 table2.ajax.reload()
             }
         });
@@ -305,7 +282,7 @@ $(document).ready(function () {
         let token = $(this).attr("data-token");
         Swal.fire({
             title: "Apakah Kamu Yakin?",
-            text: "Kamu akan menghapus data sub kriteria!",
+            text: "Kamu akan menghapus data guru!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -334,7 +311,6 @@ $(document).ready(function () {
         $("#btn-action-add-sub").html(`<button class="btn btn-primary btn-md" id="btn-add-sub">Tambah Sub Kriteria</button>`)
         $("#sub_kriteria").val("")
         $("#bobot-sub").val("")
-        $("#atribut").val("")
     })
     //Hendler Error
     function displayErrors(errors) {

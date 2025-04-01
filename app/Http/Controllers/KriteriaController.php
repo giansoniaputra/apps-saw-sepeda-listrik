@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kriteria;
-use App\Models\Perhitungan;
-use App\Models\SubKriteria;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\Perhitungan;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
 class KriteriaController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         $data = [
@@ -44,7 +46,7 @@ class KriteriaController extends Controller
             'kode.unique' => "Kode sudah ada",
             'kriteria.required' => "Kriteria tidak boleh kosong",
             'atribut.required' => "Atribut tidak boleh kosong",
-            'bobot.required' => "Bobot tidak boleh kosong",
+            'bobot.required' => "Atribut tidak boleh kosong",
         ];
         $validator = Validator::make($request->all(), $rules, $pesan);
         if ($validator->fails()) {
@@ -86,13 +88,13 @@ class KriteriaController extends Controller
     {
         $rules = [
             'kriteria' => 'required',
-            'bobot' => 'required',
             'atribut' => 'required',
+            'bobot' => 'required',
         ];
         $pesan = [
             'kriteria.required' => "Kriteria tidak boleh kosong",
             'atribut.required' => "Atribut tidak boleh kosong",
-            'bobot.required' => "Bobot tidak boleh kosong",
+            'bobot.required' => "Atribut tidak boleh kosong",
         ];
         $cek = Kriteria::where('uuid', $request->uuid)->first();
         if ($cek->kode == $request->kode) {
@@ -125,11 +127,7 @@ class KriteriaController extends Controller
     public function destroy(Kriteria $kriteria, Request $request)
     {
         Kriteria::where('uuid', $request->uuid)->delete();
-        SubKriteria::where('kriteria_uuid', $request->uuid)->delete();
-        $perhitungan = Perhitungan::where('kriteria_uuid', $request->uuid);
-        if ($perhitungan->first()) {
-            $perhitungan->delete();
-        }
+        Perhitungan::where('kriteria_uuid', $request->uuid)->delete();
         return response()->json(['success' => 'Data Kriteria Berhasil Dihapus']);
     }
 
@@ -137,26 +135,15 @@ class KriteriaController extends Controller
     {
         $query = Kriteria::all();
         foreach ($query as $row) {
+            $row->bobot = $row->bobot;
             $row->kode = 'C' . $row->kode;
         }
         return DataTables::of($query)->addColumn('action', function ($row) {
             $actionBtn =
                 '
-                <button class="btn btn-rounded btn-sm btn-success text-white sub-button" title="Sub Kriteria" data-uuid="' . $row->uuid . '" data-judul="' . $row->kriteria . '"><i class="ri-add-box-line"></i></button>
-                <button class="btn btn-rounded btn-sm btn-warning text-dark edit-button" title="Edit Data" data-uuid="' . $row->uuid . '"><i class="ri-edit-2-line"></i></button>
-                <button class="btn btn-rounded btn-sm btn-danger text-white delete-button" title="Hapus Data" data-uuid="' . $row->uuid . '" data-token="' . csrf_token() . '"><i class=" ri-delete-bin-6-fill"></i></i></button>';
-            return $actionBtn;
-        })->make(true);
-    }
-
-    public function dataTablesSubKriteria(Request $request)
-    {
-        $query = SubKriteria::where('kriteria_uuid', $request->kriteria_uuid)->get();
-        return DataTables::of($query)->addColumn('action', function ($row) {
-            $actionBtn =
-                '
-                <button class="btn btn-rounded btn-sm btn-warning text-dark edit-button" title="Edit Data" data-uuid="' . $row->uuid . '"><i class="ri-edit-2-line"></i></i></button>
-                <button class="btn btn-rounded btn-sm btn-danger text-white delete-button" title="Hapus Data" data-uuid="' . $row->uuid . '" data-token="' . csrf_token() . '"><i class=" ri-delete-bin-6-fill"></i></i></button>';
+                <button class="btn btn-rounded btn-sm btn-success text-white sub-button" title="Sub Kriteria" data-uuid="' . $row->uuid . '" data-judul="' . $row->kriteria . '"><i class="fas fa-plus"></i></button>
+                <button class="btn btn-rounded btn-sm btn-warning text-dark edit-button" title="Edit Data" data-uuid="' . $row->uuid . '"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-rounded btn-sm btn-danger text-white delete-button" title="Hapus Data" data-uuid="' . $row->uuid . '" data-token="' . csrf_token() . '"><i class="fas fa-trash-alt"></i></button>';
             return $actionBtn;
         })->make(true);
     }

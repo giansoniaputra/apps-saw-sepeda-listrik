@@ -1,10 +1,13 @@
-<div class="modal fade" id="modal-kriteria" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-kriteriaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Modal -->
+<div class="modal fade" id="modal-kriteria" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modal-title"></h5>
-                <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div> <!-- end modal header -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="btn-close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             <div class="modal-body">
                 <input type="hidden" id="uuid">
                 <form action="javascript:;" id="form-kriteria">
@@ -23,13 +26,13 @@
                     <div class="form-group mb-3">
                         <label for="atribut">Atribut</label>
                         <select name="atribut" id="atribut" class="form-control">
-                            <option value="" selected disabled>Pilih Atribut</option>
+                            <option value="" selected disabled>Pilik Kriteria</option>
                             <option value="COST">COST</option>
                             <option value="BENEFIT">BENEFIT</option>
                         </select>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="bobot">Bobot(%)</label>
+                        <label for="bobot">Bobot</label>
                         <input type="text" id="bobot" name="bobot" class="form-control">
                     </div>
                 </form>
