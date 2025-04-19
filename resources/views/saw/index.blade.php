@@ -62,7 +62,7 @@
                                 <tr>
                                     <th colspan="2" class="text-center">Nilai Bobot(Wj)</th>
                                     @foreach ($kriterias as $kriteria)
-                                        <th>{{ $kriteria->bobot }}%</th>
+                                        <th>{{ $kriteria->bobot * 100 }}%</th>
                                     @endforeach
                                 </tr>
                             </tfoot>

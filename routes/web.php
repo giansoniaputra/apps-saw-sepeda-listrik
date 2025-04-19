@@ -2,8 +2,10 @@
 
 use App\Models\Kriteria;
 use App\Models\Alternatif;
+use App\Imports\DataImport;
 use App\Models\SubKriteria;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LaporanController;
@@ -11,6 +13,8 @@ use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\AlternatifController;
 use App\Http\Controllers\PerhitunganController;
 use App\Http\Controllers\SubKriteriaController;
+use App\Models\Perhitungan;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +73,21 @@ Route::get('/saw-normalisasi', [PerhitunganController::class, 'normalisasi'])->m
 Route::get('/saw-preferensi', [PerhitunganController::class, 'preferensi'])->middleware('auth');
 Route::get('/saw', [PerhitunganController::class, 'index_saw'])->middleware('auth');
 Route::get('/cetak-laporan', [LaporanController::class, 'laporan_ranking'])->middleware('auth');
-
+Route::get('/upload-excel', function () {
+    return view('upload-excel');
+})->middleware('auth');
+Route::post('/upload-excel', function (Request $request) {
+    Alternatif::truncate();
+    Kriteria::truncate();
+    Perhitungan::truncate();
+    Excel::import(new DataImport, $request->file('excel'));
+    echo '
+    <script>
+        alert("Data Berhasil DiImport")
+        document.location.href = "/saw"
+    </script>
+    ';
+})->middleware('auth');
 
 
 // Route::get('/masukan-sub', function () {

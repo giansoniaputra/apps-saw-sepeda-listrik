@@ -6,8 +6,8 @@
         <div class="sidebar-brand-icon rotate-n-15">
             {{-- <i class="fas fa-laugh-wink"></i> --}}
         </div>
-        <img src="/assets/img/logo.png" height="40" alt="">
-        <div class="sidebar-brand-text mx-3">SMK Bhakti Pertiwi</div>
+        {{-- <img src="/assets/img/logo.png" height="40" alt=""> --}}
+        <div class="sidebar-brand-text mx-3">PEMILIHAN SPEDA LISTRIK</div>
     </a>
 
     <!-- Divider -->
@@ -30,7 +30,8 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+            aria-expanded="true" aria-controls="collapseTwo">
             {{-- <i class="fas fa-fw fa-cog"></i> --}}
             <span>Master</span>
         </a>
@@ -45,7 +46,8 @@
 
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+            aria-expanded="true" aria-controls="collapseUtilities">
             {{-- <i class="fas fa-fw fa-calculator"></i> --}}
             <span>Perhitungan</span>
         </a>

@@ -9,11 +9,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>{{ $title }} | SMK Bhakti Pertiwi</title>
+    <title style="text-transform: uppercase;">{{ $title }} | PEMILIHAN SPEDA LISTRIK | SPK SAW</title>
 
     <!-- Custom fonts for this template -->
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
@@ -90,14 +92,12 @@
         .modal-body textarea {
             border: 1px solid #1A2942 !important;
         }
-
     </style>
     <script>
         const loader = `
             <div class="card d-flex justify-conten-center align-items-center card-spinner">
                 <div class="spinner" style="position:relative;z-index: 101;"></div>
             </div>`;
-
     </script>
 
 </head>
@@ -125,23 +125,26 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
-                        @if(auth()->check())
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @if (auth()->check())
+                            <!-- Nav Item - User Information -->
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ auth()->user()->name }}</span>
-                                <img class="img-profile rounded-circle" src="/assets/img/undraw_profile.svg">
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <div class="dropdown-divider"></div>
-                                <button class="dropdown-item logout" href="/logout">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </button>
-                            </div>
-                        </li>
+                                    <span
+                                        class="mr-2 d-none d-lg-inline text-gray-600 small">{{ auth()->user()->name }}</span>
+                                    <img class="img-profile rounded-circle" src="/assets/img/undraw_profile.svg">
+                                </a>
+                                <!-- Dropdown - User Information -->
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                    aria-labelledby="userDropdown">
+                                    <div class="dropdown-divider"></div>
+                                    <button class="dropdown-item logout" href="/logout">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Logout
+                                    </button>
+                                </div>
+                            </li>
                         @endif
 
                     </ul>
@@ -172,7 +175,6 @@
 
                             // Menampilkan tahun saat ini di elemen HTML
                             document.getElementById('current-year').textContent = currentYear;
-
                         </script>
                     </div>
                 </div>
@@ -191,7 +193,8 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -228,20 +231,19 @@
             let unique = $(this).attr("data-unique");
             let token = $(this).attr("data-token");
             Swal.fire({
-                title: "Apakah Kamu Yakin?"
-                , text: "Anda akan keluar!"
-                , icon: "warning"
-                , showCancelButton: true
-                , confirmButtonColor: "#3085d6"
-                , cancelButtonColor: "#d33"
-                , confirmButtonText: "Yes, Keluar!"
-            , }).then((result) => {
+                title: "Apakah Kamu Yakin?",
+                text: "Anda akan keluar!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Keluar!",
+            }).then((result) => {
                 if (result.isConfirmed) {
                     document.location.href = '/logout';
                 }
             });
         })
-
     </script>
 
 </body>
