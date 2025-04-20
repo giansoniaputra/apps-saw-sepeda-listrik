@@ -89,6 +89,14 @@ Route::post('/upload-excel', function (Request $request) {
     ';
 })->middleware('auth');
 
+Route::get('/rekomendasi', function(){
+    return view('rekomendasi',[
+        'kriterias' => Kriteria::all()
+    ]);
+});
+
+Route::get('/normalisasi-user', [PerhitunganController::class, 'normalisasi_user']);
+
 
 // Route::get('/masukan-sub', function () {
 //     $kriteria = Kriteria::orderBy('kode')->get();

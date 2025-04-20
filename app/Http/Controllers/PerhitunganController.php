@@ -8,6 +8,7 @@ use App\Models\Perhitungan;
 use App\Models\SubKriteria;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PerhitunganController extends Controller
@@ -239,5 +240,138 @@ class PerhitunganController extends Controller
         $data['ranking'] = $final_ranking;
 
         return response()->json(['data' => $data, 'pecah_hasil' => $pecah_hasil, 'hasil_kali' => $hasil_kali]);
+    }
+
+    public function normalisasi_user(Request $request)
+    {
+        $array_pembilang = [];
+        $array_pembagi = [];
+        $count_alternatif = Alternatif::count('id');
+        $kriterias = Kriteria::orderBy('kode', 'asc')->get();
+        $alternatifs = Alternatif::orderBy('alternatif', 'asc')->get();
+        $mooras = Perhitungan::all();
+        $last_id = Alternatif::orderBy('alternatif', 'desc')->first();
+        $last_id_moora = Perhitungan::orderBy('id', 'desc')->first();
+        // MENAMBAH ALTERNATIF BARU
+        $newRecord = new Alternatif();
+        $newRecord->id = $last_id->id + 1;
+        $newRecord->uuid = Str::orderedUuid();
+        $newRecord->alternatif = count($alternatifs) + 1;
+        $newRecord->keterangan = 'Pilihan Anda';
+        $newRecord->created_at = Carbon::now();
+        $newRecord->updated_at = Carbon::now();
+        $alternatifs->push($newRecord);
+        // MENAMBAH ALTERNATIF BARU
+        // MENAMBAH PERHITUNGAN BARU
+        $i = 0;
+        foreach ($request->all() as $index => $row) {
+            $newMoora = new Perhitungan();
+            $newMoora->id =  $last_id_moora->id++;
+            $newMoora->uuid = Str::orderedUuid();
+            $newMoora->alternatif_uuid = $alternatifs[count($alternatifs) - 1]->uuid;
+            $newMoora->kriteria_uuid = $kriterias[$i++]->uuid;
+            $newMoora->bobot = $row;
+            $newMoora->created_at = Carbon::now();
+            $newMoora->updated_at = Carbon::now();
+            $mooras->push($newMoora);
+        }
+        // $query = $mooras->where('alternatif_uuid', $alternatifs[5]->uuid)->first();
+        // return response()->json(['alternatifs' => $mooras]);
+        // return response()->json(['success' => $alternatifs[5]->uuid . '  /  ' . $kriterias[1]->uuid]);
+        // MENAMBAH PERHITUNGAN BARU
+        foreach ($kriterias as $kriteria) {
+            foreach ($alternatifs as $alternatif) {
+                $query = $mooras->where('alternatif_uuid', $alternatif->uuid)->where('kriteria_uuid', $kriteria->uuid)->first();
+                $array_pembagi[] = pow($query->bobot, 2);
+                $array_pembilang[] = $query->bobot;
+            }
+        }
+        // PERHITUNGAN KOSTUM
+        $kuadrat = array_chunk($array_pembagi, $count_alternatif + 1);
+        $pembilang = array_chunk($array_pembilang, $count_alternatif + 1);
+        $pembagi = [];
+        foreach ($kuadrat as $row) {
+            $jumlah = array_sum($row);
+            $akarKuadrat = floatval(number_format(sqrt($jumlah), 3));
+            $pembagi[] = $akarKuadrat;
+        }
+        $hasil = [];
+        foreach ($pembilang as $row => $val) {
+            $hasil[$row] = array_map(function ($value) use ($row, $pembagi) {
+                return floatval(number_format($value / $pembagi[$row], 3));
+            }, $val);
+        }
+        // PREPERENSI
+        $data = $this->transpose($hasil);
+        $kriterias = Kriteria::orderBy('kode', 'asc');
+
+        $bobot = [];
+        foreach ($kriterias->get() as $kriteria) {
+            $bobot[] = kriteria::bobot($kriteria->bobot);
+        }
+        $result_array = [];
+        for ($i = 0; $i < count($data); $i++) {
+            for ($j = 0; $j < count($bobot); $j++) {
+                $result_array[] = floatval(number_format($data[$i][$j] * $bobot[$j], 3));
+            }
+        }
+        $final_result = array_chunk($result_array, $kriterias->count('id'));
+        $rangking = [];
+        $atribut = [];
+        foreach ($kriterias->get() as $row) {
+            $atribut[] = $row->atribut;
+        }
+
+        // Loop melalui setiap array (SIPA)
+        for ($k = 0; $k < count($final_result); $k++) {
+            for ($l = 0; $l < count($bobot); $l++) {
+                $jumlah = 0;
+                if ($atribut[$l] == 'BENEFIT') {
+                    $jumlah += $final_result[$k][$l];
+                } else {
+                    $jumlah -= $final_result[$k][$l];
+                }
+                $rangking[] = $jumlah;
+            }
+        }
+
+        $rangking_result = array_chunk($rangking, $kriterias->count('id'));
+        $final_ranking = [];
+        for ($u = 0; $u < count($rangking_result); $u++) {
+            $final_ranking[] = array_sum($rangking_result[$u]);
+        }
+
+        $rangking_assoc = [];
+        foreach ($final_ranking as $index => $nilai) {
+            $rangking_assoc[] = [$alternatifs[$index]->keterangan, $nilai];
+        }
+
+        $names = array_column($rangking_assoc, 0);
+        $scores = array_column($rangking_assoc, 1);
+
+        // Menggunakan array_multisort untuk mengurutkan scores secara menurun
+        array_multisort($scores, SORT_DESC, $names);
+
+        // Menggabungkan kembali array setelah diurutkan
+        $result2 = array_map(function ($name, $score) {
+            return [$name, $score];
+        }, $names, $scores);
+
+
+        return response()->json([
+            'result' => $final_result,
+            'hasil' => $result2
+        ]);
+    }
+
+    function transpose($matrix)
+    {
+        $transposedMatrix = [];
+        foreach ($matrix as $rowIndex => $row) {
+            foreach ($row as $colIndex => $value) {
+                $transposedMatrix[$colIndex][$rowIndex] = $value;
+            }
+        }
+        return $transposedMatrix;
     }
 }
