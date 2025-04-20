@@ -198,16 +198,16 @@ class PerhitunganController extends Controller
         //Mengambil Bobot Kriteria
         $bobot = [];
         foreach ($data['kriterias'] as $kriteria) {
-            $bobot[] = $kriteria->bobot / 100;
+            // $bobot[] = $kriteria->bobot / 100;
+            $bobot[] = $kriteria->bobot;
         }
         //Meng kalikan bobot dengan normalisasi
         $hasil_kali = [];
         for ($i = 0; $i < count($bobot_kriteria); $i++) {
             for ($j = 0; $j < count($bobot); $j++) {
-                $hasil_kali[] = floatval(number_format($bobot_kriteria[$i][$j] * $bobot[$j], 3));
+                $hasil_kali[] = round(($bobot_kriteria[$i][$j] * $bobot[$j]), 4, PHP_ROUND_HALF_EVEN);
             }
         }
-
         //hasil perkalian di pecah menjadi array muti dimensi
         $pecah_hasil = array_chunk($hasil_kali, $data['sum_kriteria']);
 
@@ -238,6 +238,6 @@ class PerhitunganController extends Controller
 
         $data['ranking'] = $final_ranking;
 
-        return response()->json(['data' => $data, 'pecah_hasil' => $pecah_hasil]);
+        return response()->json(['data' => $data, 'pecah_hasil' => $pecah_hasil, 'hasil_kali' => $hasil_kali]);
     }
 }

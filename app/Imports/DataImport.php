@@ -53,7 +53,7 @@ class DataImport implements ToCollection, WithStartRow
                     'kode' => $row[3],
                     'kriteria' => $row[4],
                     'atribut' => $row[5],
-                    'bobot' => $row[6],
+                    'bobot' => (float) $row[6],
                 ]);
             }
         }
@@ -66,7 +66,7 @@ class DataImport implements ToCollection, WithStartRow
                     'uuid' => Str::orderedUuid(),
                     'alternatif_uuid' => $alternatif->uuid,
                     'kriteria_uuid' => $kriteria->uuid,
-                    'bobot' => $row[8 + $i]
+                    'bobot' => (float) $row[8 + $i]
                 ]);
             }
         }

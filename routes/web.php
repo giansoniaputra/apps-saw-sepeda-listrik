@@ -69,8 +69,8 @@ Route::post('/alternatif-destroy/{alternatif:uuid}', [AlternatifController::clas
 Route::get('/perhitungan', [PerhitunganController::class, 'index'])->middleware('auth');
 Route::get('/perhitungan-create', [PerhitunganController::class, 'create'])->middleware('auth');
 Route::get('/perhitungan-update/{perhitungan:uuid}', [PerhitunganController::class, 'update'])->middleware('auth');
-Route::get('/saw-normalisasi', [PerhitunganController::class, 'normalisasi'])->middleware('auth');
-Route::get('/saw-preferensi', [PerhitunganController::class, 'preferensi'])->middleware('auth');
+Route::get('/saw-normalisasi', [PerhitunganController::class, 'normalisasi']);
+Route::get('/saw-preferensi', [PerhitunganController::class, 'preferensi']);
 Route::get('/saw', [PerhitunganController::class, 'index_saw'])->middleware('auth');
 Route::get('/cetak-laporan', [LaporanController::class, 'laporan_ranking'])->middleware('auth');
 Route::get('/upload-excel', function () {

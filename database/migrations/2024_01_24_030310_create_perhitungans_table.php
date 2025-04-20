@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->string('alternatif_uuid');
             $table->string('kriteria_uuid');
-            $table->string('bobot');
+            $table->double('bobot', 8, 2);
             $table->timestamps();
         });
     }
