@@ -8,4 +8,7 @@ function get_sub_kriteria($uuid)
     return $data;
 }
 
-?>
+function rupiah($angka)
+{
+    return 'Rp. ' . number_format($angka, 0, '.', ',');
+}

@@ -335,21 +335,22 @@ class PerhitunganController extends Controller
         $nama = $alternatifs->sortBy('alternatif');
         $rangking_assoc = [];
         foreach ($ranking as $index => $nilai) {
-            $rangking_assoc[] = [$nama[$index]->keterangan, $nilai, $nama[$index]->alternatif, $nama[$index]->photo];
+            $rangking_assoc[] = [$nama[$index]->keterangan, $nilai, $nama[$index]->alternatif, $nama[$index]->photo, $nama[$index]->harga];
         }
 
         $names = array_column($rangking_assoc, 0);
         $scores = array_column($rangking_assoc, 1);
         $alternatif = array_column($rangking_assoc, 2);
         $photo = array_column($rangking_assoc, 3);
+        $harga = array_column($rangking_assoc, 4);
 
         // Menggunakan array_multisort untuk mengurutkan scores secara menurun
-        array_multisort($scores, SORT_DESC, $names, $alternatif, $photo);
+        array_multisort($scores, SORT_DESC, $names, $alternatif, $photo, $harga);
 
         // Menggabungkan kembali array setelah diurutkan
-        $final_ranking = array_map(function ($name, $score, $alternatif, $photo) {
-            return [$name, $score, $alternatif, $photo];
-        }, $names, $scores, $alternatif, $photo);
+        $final_ranking = array_map(function ($name, $score, $alternatif, $photo, $harga) {
+            return [$name, $score, $alternatif, $photo, rupiah($harga)];
+        }, $names, $scores, $alternatif, $photo, $harga);
 
         $data['ranking'] = $final_ranking;
 

@@ -27,7 +27,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', function () {
+Route::get('/dashboard', function () {
     $data = [
         'title' => 'Dashboard',
         'alternatif' => Alternatif::count('id'),
@@ -89,8 +89,8 @@ Route::post('/upload-excel', function (Request $request) {
     ';
 })->middleware('auth');
 
-Route::get('/rekomendasi', function(){
-    return view('rekomendasi',[
+Route::get('/', function () {
+    return view('rekomendasi', [
         'kriterias' => Kriteria::all()
     ]);
 });

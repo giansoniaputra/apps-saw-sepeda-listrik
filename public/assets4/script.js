@@ -22,7 +22,7 @@ $(document).ready(function () {
                         let nilai = a[1];
                         response.hasil.ranking.map((b) => {
                             if (nilai > b[1]) {
-                                rangking.push([b[0], b[3]])
+                                rangking.push([b[0], b[3], b[4]])
                             }
                         })
                     }
@@ -37,7 +37,7 @@ $(document).ready(function () {
                 } else {
                     Swal.fire({
                         title: rangking[0][0],
-                        text: `${rangking[0][0]} adalah rekomendasi speda listrik terbaik untuk anda!`,
+                        text: `${rangking[0][0]} adalah rekomendasi speda listrik terbaik untuk anda dengan harga ${rangking[0][2]}`,
                         imageUrl: "/storage/" + rangking[0][1],
                         imageWidth: 400,
                         imageHeight: 200,
