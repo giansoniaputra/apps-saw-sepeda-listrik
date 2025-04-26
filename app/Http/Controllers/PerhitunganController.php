@@ -244,6 +244,7 @@ class PerhitunganController extends Controller
 
     public function normalisasi_user(Request $request)
     {
+        $sum_kriteria = Kriteria::count('id');
         $array_pembilang = [];
         $array_pembagi = [];
         $count_alternatif = Alternatif::count('id');
@@ -279,88 +280,87 @@ class PerhitunganController extends Controller
         // return response()->json(['alternatifs' => $mooras]);
         // return response()->json(['success' => $alternatifs[5]->uuid . '  /  ' . $kriterias[1]->uuid]);
         // MENAMBAH PERHITUNGAN BARU
-        foreach ($kriterias as $kriteria) {
-            foreach ($alternatifs as $alternatif) {
-                $query = $mooras->where('alternatif_uuid', $alternatif->uuid)->where('kriteria_uuid', $kriteria->uuid)->first();
-                $array_pembagi[] = pow($query->bobot, 2);
-                $array_pembilang[] = $query->bobot;
-            }
-        }
-        // PERHITUNGAN KOSTUM
-        $kuadrat = array_chunk($array_pembagi, $count_alternatif + 1);
-        $pembilang = array_chunk($array_pembilang, $count_alternatif + 1);
-        $pembagi = [];
-        foreach ($kuadrat as $row) {
-            $jumlah = array_sum($row);
-            $akarKuadrat = floatval(number_format(sqrt($jumlah), 3));
-            $pembagi[] = $akarKuadrat;
-        }
-        $hasil = [];
-        foreach ($pembilang as $row => $val) {
-            $hasil[$row] = array_map(function ($value) use ($row, $pembagi) {
-                return floatval(number_format($value / $pembagi[$row], 3));
-            }, $val);
-        }
-        // PREPERENSI
-        $data = $this->transpose($hasil);
-        $kriterias = Kriteria::orderBy('kode', 'asc');
-
-        $bobot = [];
-        foreach ($kriterias->get() as $kriteria) {
-            $bobot[] = kriteria::bobot($kriteria->bobot);
-        }
-        $result_array = [];
-        for ($i = 0; $i < count($data); $i++) {
-            for ($j = 0; $j < count($bobot); $j++) {
-                $result_array[] = floatval(number_format($data[$i][$j] * $bobot[$j], 3));
-            }
-        }
-        $final_result = array_chunk($result_array, $kriterias->count('id'));
-        $rangking = [];
-        $atribut = [];
-        foreach ($kriterias->get() as $row) {
-            $atribut[] = $row->atribut;
-        }
-
-        // Loop melalui setiap array (SIPA)
-        for ($k = 0; $k < count($final_result); $k++) {
-            for ($l = 0; $l < count($bobot); $l++) {
-                $jumlah = 0;
-                if ($atribut[$l] == 'BENEFIT') {
-                    $jumlah += $final_result[$k][$l];
-                } else {
-                    $jumlah -= $final_result[$k][$l];
+        $elements = '';
+        $array_bobot = [];
+        foreach ($alternatifs as $alternatif) {
+            $elements .= "<tr><td>A$alternatif->alternatif</td>
+            <td>$alternatif->keterangan</td>";
+            foreach ($kriterias as $kriteria) {
+                $bobots = $mooras->where('alternatif_uuid', $alternatif->uuid)->where('kriteria_uuid', $kriteria->uuid);
+                foreach ($bobots as $bobot) {
+                    if ($kriteria->atribut == 'BENEFIT') {
+                        $perhitung = $mooras->where('kriteria_uuid', $kriteria->uuid)->sortByDesc('bobot')->first();
+                        $hasil = $bobot->bobot / $perhitung->bobot;
+                    } else {
+                        $perhitung = $mooras->where('kriteria_uuid', $kriteria->uuid)->sortBy('bobot')->first();
+                        $hasil = $perhitung->bobot / $bobot->bobot;
+                    }
+                    $bobot_kriteria = round($hasil, 3);
+                    $array_bobot[] = $bobot_kriteria;
                 }
-                $rangking[] = $jumlah;
+            }
+            $elements .= "</tr>";
+        }
+        // return response()->json(['data' => [
+        //     'alternatif' => $alternatifs,
+        //     'kriteria' => $kriterias,
+        // ]]);
+        $data['elements'] = $elements;
+        //MENGHITUNG RANKING-----------------------------------------------
+        $bobot_kriteria = array_chunk($array_bobot, Kriteria::count('id'));
+
+        //Mengambil Bobot Kriteria
+        $bobot = [];
+        foreach ($kriterias as $kriteria) {
+            // $bobot[] = $kriteria->bobot / 100;
+            $bobot[] = $kriteria->bobot;
+        }
+        //Meng kalikan bobot dengan normalisasi
+        $hasil_kali = [];
+        for ($i = 0; $i < count($bobot_kriteria); $i++) {
+            for ($j = 0; $j < count($bobot); $j++) {
+                $hasil_kali[] = round(($bobot_kriteria[$i][$j] * $bobot[$j]), 4, PHP_ROUND_HALF_EVEN);
             }
         }
+        //hasil perkalian di pecah menjadi array muti dimensi
+        $pecah_hasil = array_chunk($hasil_kali, Kriteria::count('id'));
 
-        $rangking_result = array_chunk($rangking, $kriterias->count('id'));
-        $final_ranking = [];
-        for ($u = 0; $u < count($rangking_result); $u++) {
-            $final_ranking[] = array_sum($rangking_result[$u]);
+        // Perkalian Semua Array
+        $ranking = [];
+        for ($u = 0; $u < count($pecah_hasil); $u++) {
+            $ranking[] = round(array_sum($pecah_hasil[$u]), 4);
         }
 
+        //Merangking
+        $nama = $alternatifs->sortBy('alternatif');
         $rangking_assoc = [];
-        foreach ($final_ranking as $index => $nilai) {
-            $rangking_assoc[] = [$alternatifs[$index]->keterangan, $nilai];
+        foreach ($ranking as $index => $nilai) {
+            $rangking_assoc[] = [$nama[$index]->keterangan, $nilai, $nama[$index]->alternatif, $nama[$index]->photo];
         }
 
         $names = array_column($rangking_assoc, 0);
         $scores = array_column($rangking_assoc, 1);
+        $alternatif = array_column($rangking_assoc, 2);
+        $photo = array_column($rangking_assoc, 3);
 
         // Menggunakan array_multisort untuk mengurutkan scores secara menurun
-        array_multisort($scores, SORT_DESC, $names);
+        array_multisort($scores, SORT_DESC, $names, $alternatif, $photo);
 
         // Menggabungkan kembali array setelah diurutkan
-        $result2 = array_map(function ($name, $score) {
-            return [$name, $score];
-        }, $names, $scores);
+        $final_ranking = array_map(function ($name, $score, $alternatif, $photo) {
+            return [$name, $score, $alternatif, $photo];
+        }, $names, $scores, $alternatif, $photo);
 
+        $data['ranking'] = $final_ranking;
 
         return response()->json([
-            'result' => $final_result,
-            'hasil' => $result2
+            'hasil' => $data,
+            'pecah_hasil' => $pecah_hasil,
+            'hasil_kali' => $hasil_kali,
+            'data' => [
+                'kriteria' => $kriterias,
+                'alternatif' => $alternatifs
+            ]
         ]);
     }
 

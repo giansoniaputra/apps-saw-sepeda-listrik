@@ -51,19 +51,34 @@ $(document).ready(function () {
     })
 
     $("#modal-alternatif").on("click", "#btn-save", function () {
-        let form = $("form[id='form-alternatif']").serialize();
+        let photo = document.querySelector("input[name='photo']")
+
+        let formData = new FormData();
+        if (photo.value != '') {
+            formData.append('photo', photo.files[0]);
+        }
+
+        // Mendapatkan data inputan lainnya dari hasil serialize
+        let serializedData = $("form[id='form-alternatif']").serialize();// Ganti #form dengan ID formulir Anda
+        let otherData = serializedData.split("&");
+
+        otherData.forEach(function (item) {
+            let keyValue = item.split("=");
+            formData.append(keyValue[0], decodeURIComponent(keyValue[1]));
+        });
         $.ajax({
-            data: form,
+            data: formData,
             url: "/alternatif-store",
             type: "POST",
             dataType: 'json',
+            processData: false,
+            contentType: false,
             success: function (response) {
                 if (response.errors) {
                     displayErrors(response.errors);
                 } else {
                     table.ajax.reload()
-                    $("#alternatif").val("")
-                    $("#keterangan").val("")
+                    reset()
                     $("#modal-alternatif").modal("hide");
                     Swal.fire("Success!", response.success, "success");
                 }
@@ -73,8 +88,7 @@ $(document).ready(function () {
     })
 
     $("#btn-close").on("click", function () {
-        $("#alternatif").val("")
-        $("#keterangan").val("")
+        reset()
         $("#current_uuid").val("")
         $("#modal-alternatif").modal("hide");
     })
@@ -93,25 +107,47 @@ $(document).ready(function () {
                 `)
                 $("#alternatif").val(response.data.alternatif)
                 $("#keterangan").val(response.data.keterangan)
+                $('#type').val(response.data.type);
+                $('#harga').val(response.data.harga);
+                $('#batrai').val(response.data.batrai);
+                $('#power').val(response.data.power);
+                $('#kecepatan').val(response.data.kecepatan);
+                $('#jarak').val(response.data.jarak);
+                $('#daya').val(response.data.daya);
                 $("#modal-alternatif").modal("show");
             }
         });
     })
 
     $("#modal-alternatif").on("click", "#btn-update", function () {
-        let form = $("form[id='form-alternatif']").serialize();
+        let photo = document.querySelector("input[name='photo']")
+
+        let formData = new FormData();
+        if (photo.value != '') {
+            formData.append('photo', photo.files[0]);
+        }
+
+        // Mendapatkan data inputan lainnya dari hasil serialize
+        let serializedData = $("form[id='form-alternatif']").serialize();// Ganti #form dengan ID formulir Anda
+        let otherData = serializedData.split("&");
+
+        otherData.forEach(function (item) {
+            let keyValue = item.split("=");
+            formData.append(keyValue[0], decodeURIComponent(keyValue[1]));
+        });
         $.ajax({
-            data: form,
+            data: formData,
             url: "/alternatif-update/" + $("#current_uuid").val(),
             type: "POST",
             dataType: 'json',
+            processData: false,
+            contentType: false,
             success: function (response) {
                 if (response.errors) {
                     displayErrors(response.errors);
                 } else {
                     table.ajax.reload()
-                    $("#alternatif").val("")
-                    $("#keterangan").val("")
+                    reset()
                     $("#current_uuid").val("")
                     $("#modal-alternatif").modal("hide");
                     Swal.fire("Success!", response.success, "success");
@@ -228,5 +264,14 @@ $(document).ready(function () {
                 });
             });
         });
+    }
+    //KOSONGKAN SEMUA INPUTAN
+    function reset() {
+        let form = $("form[id='form-alternatif']").serializeArray();
+        form.map((a) => {
+            $(`#${a.name}`).val("");
+        })
+        $("#btn-action").html("")
+        $("#modal-alternatif").modal("hide")
     }
 });

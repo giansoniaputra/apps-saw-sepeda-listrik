@@ -17,21 +17,33 @@ $(document).ready(function () {
                 // console.log(transposedMatrix);
                 // Membuat tabel HTML
                 let rangking = [];
-                response.hasil.map((a) => {
+                response.hasil.ranking.map((a) => {
                     if (a[0] == 'Pilihan Anda') {
                         let nilai = a[1];
-                        response.hasil.map((b) => {
+                        response.hasil.ranking.map((b) => {
                             if (nilai > b[1]) {
-                                rangking.push(b[0])
+                                rangking.push([b[0], b[3]])
                             }
                         })
                     }
                 })
+
                 $("#spinner").html("")
-                if (rangking[0] == undefined) {
+
+                if (rangking.length == 0) {
                     Swal.fire("Sayang Sekali", "Tidak ada rekomendasi dari data yang anda masukan", "warning");
+                    // Swal.fire("Sepeda Listrik " + response.end[0], "Adalah rekomendasi Sepeda Listrik terbaik", "success");
+
                 } else {
-                    Swal.fire("Sepeda Listrik " + rangking[0], "Adalah rekomendasi Sepeda Listrik terbaik", "success");
+                    Swal.fire({
+                        title: rangking[0][0],
+                        text: `${rangking[0][0]} adalah rekomendasi speda listrik terbaik untuk anda!`,
+                        imageUrl: "/storage/" + rangking[0][1],
+                        imageWidth: 400,
+                        imageHeight: 200,
+                        imageAlt: "Custom image"
+                    });
+                    // Swal.fire("Sepeda Listrik " + rangking[0][0], "Adalah rekomendasi Sepeda Listrik terbaik", "success");
                 }
                 let table3 = `<div class="row">
                                         <div class="col-sm-12">
@@ -46,30 +58,42 @@ $(document).ready(function () {
                                                     <thead>
                                                     <tbody>
                                                     `
-                response.hasil.map((a, b) => {
-                    if (a[0] != rangking[0]) {
-
+                let no = 0;
+                response.hasil.ranking.map((a, b) => {
+                    if (a[0] != rangking[0][0]) {
                         if (a[0] == "Pilihan Anda") {
                             let nilai = a[1];
-                            response.hasil.map((b) => {
+                            response.hasil.ranking.map((b) => {
                                 if (nilai > b[1]) {
-                                    keterangan = `<span class="text-info">${rangking[0]}</span>`
+                                    keterangan = `<span class="text-info">${rangking[0][0]}</span>`
                                 }
                             })
                         } else {
                             var keterangan = `<span>${a[0]}</span>`
                         }
-                        table3 += `<tr>
-                        <td>${b + 1}</td>
-                        <td>${keterangan}</td>
-                        </tr>
-                        `
+                        if (keterangan !== undefined) {
+                            let newNo = no + 1;
+                            table3 += `<tr>
+                            <td>${newNo}</td>
+                            <td>${keterangan}</td>
+                            </tr>
+                            `
+                            no = newNo
+                        }
+                        // else {
+                        //     table3 += `<tr>
+                        //     <td>${b}</td>
+                        //     <td>${keterangan}</td>
+                        //     </tr>
+                        //     `
+                        // }
                     }
                 });
                 table3 += "</tbody></table></div></div></div></div></div></div>";
 
                 $("#rangking").html(table3);
                 $("#modal-rekomendasi").modal("show")
+
             }
         })
     })

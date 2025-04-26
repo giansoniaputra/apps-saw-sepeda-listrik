@@ -7,6 +7,7 @@ use App\Models\Perhitungan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PerhitunganMoora;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -35,12 +36,12 @@ class AlternatifController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()]);
         } else {
-            $data = [
-                'uuid' => Str::orderedUuid(),
-                'alternatif' => $request->alternatif,
-                'keterangan' => $request->keterangan,
-            ];
-            Alternatif::create($data);
+            $alternatif = new Alternatif($request->all());
+            $alternatif->uuid = Str::orderedUuid();
+            if ($request->file('photo')) {
+                $alternatif->photo = $request->file('photo')->store('photo');
+            }
+            $alternatif->save();
             return response()->json(['success' => 'Alternatif Berhasi Di Buat!']);
         }
     }
@@ -73,11 +74,12 @@ class AlternatifController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()]);
         } else {
-            $data = [
-                'alternatif' => $request->alternatif,
-                'keterangan' => $request->keterangan,
-            ];
-            Alternatif::where('uuid', $alternatif->uuid)->update($data);
+            $alternatif->fill($request->all());
+            if ($request->file('photo')) {
+                Storage::delete($alternatif->photo);
+                $alternatif->photo = $request->file('photo')->store('photo');
+            }
+            $alternatif->save();
             return response()->json(['success' => 'Alternatif Berhasi Di Ubah!']);
         }
     }
@@ -86,6 +88,9 @@ class AlternatifController extends Controller
     {
         Alternatif::destroy($alternatif->id);
         Perhitungan::where('alternatif_uuid', $alternatif->uuid)->delete();
+        if ($alternatif->photo) {
+            Storage::delete($alternatif->photo);
+        }
         return response()->json(['success' => 'Alternatif Berhasil Di Hapus!']);
     }
 

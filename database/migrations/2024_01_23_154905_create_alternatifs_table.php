@@ -16,6 +16,14 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->integer('alternatif');
             $table->string('keterangan');
+            $table->string('type')->nullable();
+            $table->integer('harga')->nullable();
+            $table->string('batrai')->nullable();
+            $table->string('power')->nullable();
+            $table->integer('kecepatan')->nullable();
+            $table->integer('jarak')->nullable();
+            $table->integer('daya')->nullable();
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }
