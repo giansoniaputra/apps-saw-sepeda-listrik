@@ -12,7 +12,9 @@ $(document).ready(function () {
                 data: null,
                 orderable: false,
                 render: function (data, type, row, meta) {
-                    var pageInfo = $("#table-alternatif").DataTable().page.info();
+                    var pageInfo = $("#table-alternatif")
+                        .DataTable()
+                        .page.info();
                     var index = meta.row + pageInfo.start + 1;
                     return index;
                 },
@@ -22,6 +24,16 @@ $(document).ready(function () {
             },
             {
                 data: "keterangan",
+            },
+            {
+                data: null,
+                render: (data) => {
+                    if (data.photo) {
+                        return `<a target="_blank" href="/storage/${data.photo}" class="badge bg-success text-white">Lihat Gambar</a>`;
+                    } else {
+                        return "Tidak ada gambar";
+                    }
+                },
             },
             {
                 data: "action",
@@ -44,22 +56,22 @@ $(document).ready(function () {
     // Ketika Tombol Tambah Di Klik
     $("#btn-add-data").on("click", function () {
         $("#modal-alternatif").modal("show");
-        $("#modal-title").html("Tambah Data Alternatif")
+        $("#modal-title").html("Tambah Data Alternatif");
         $("#btn-action").html(`
             <button class="btn btn-primary" id="btn-save">Tambah</button>
-        `)
-    })
+        `);
+    });
 
     $("#modal-alternatif").on("click", "#btn-save", function () {
-        let photo = document.querySelector("input[name='photo']")
+        let photo = document.querySelector("input[name='photo']");
 
         let formData = new FormData();
-        if (photo.value != '') {
-            formData.append('photo', photo.files[0]);
+        if (photo.value != "") {
+            formData.append("photo", photo.files[0]);
         }
 
         // Mendapatkan data inputan lainnya dari hasil serialize
-        let serializedData = $("form[id='form-alternatif']").serialize();// Ganti #form dengan ID formulir Anda
+        let serializedData = $("form[id='form-alternatif']").serialize(); // Ganti #form dengan ID formulir Anda
         let otherData = serializedData.split("&");
 
         otherData.forEach(function (item) {
@@ -70,65 +82,64 @@ $(document).ready(function () {
             data: formData,
             url: "/alternatif-store",
             type: "POST",
-            dataType: 'json',
+            dataType: "json",
             processData: false,
             contentType: false,
             success: function (response) {
                 if (response.errors) {
                     displayErrors(response.errors);
                 } else {
-                    table.ajax.reload()
-                    reset()
+                    table.ajax.reload();
+                    reset();
                     $("#modal-alternatif").modal("hide");
                     Swal.fire("Success!", response.success, "success");
                 }
-            }
+            },
         });
-
-    })
+    });
 
     $("#btn-close").on("click", function () {
-        reset()
-        $("#current_uuid").val("")
+        reset();
+        $("#current_uuid").val("");
         $("#modal-alternatif").modal("hide");
-    })
+    });
 
     $("#table-alternatif").on("click", ".edit-button", function () {
         let uuid = $(this).data("uuid");
-        $("#current_uuid").val(uuid)
+        $("#current_uuid").val(uuid);
         $.ajax({
             url: "/alternatif-edit/" + uuid,
             type: "GET",
-            dataType: 'json',
+            dataType: "json",
             success: function (response) {
-                $("#modal-title").html("Ubah Data Alternatif")
+                $("#modal-title").html("Ubah Data Alternatif");
                 $("#btn-action").html(`
                     <button class="btn btn-primary" id="btn-update">Ubah</button>
-                `)
-                $("#alternatif").val(response.data.alternatif)
-                $("#keterangan").val(response.data.keterangan)
-                $('#type').val(response.data.type);
-                $('#harga').val(response.data.harga);
-                $('#batrai').val(response.data.batrai);
-                $('#power').val(response.data.power);
-                $('#kecepatan').val(response.data.kecepatan);
-                $('#jarak').val(response.data.jarak);
-                $('#daya').val(response.data.daya);
+                `);
+                $("#alternatif").val(response.data.alternatif);
+                $("#keterangan").val(response.data.keterangan);
+                $("#type").val(response.data.type);
+                $("#harga").val(response.data.harga);
+                $("#batrai").val(response.data.batrai);
+                $("#power").val(response.data.power);
+                $("#kecepatan").val(response.data.kecepatan);
+                $("#jarak").val(response.data.jarak);
+                $("#daya").val(response.data.daya);
                 $("#modal-alternatif").modal("show");
-            }
+            },
         });
-    })
+    });
 
     $("#modal-alternatif").on("click", "#btn-update", function () {
-        let photo = document.querySelector("input[name='photo']")
+        let photo = document.querySelector("input[name='photo']");
 
         let formData = new FormData();
-        if (photo.value != '') {
-            formData.append('photo', photo.files[0]);
+        if (photo.value != "") {
+            formData.append("photo", photo.files[0]);
         }
 
         // Mendapatkan data inputan lainnya dari hasil serialize
-        let serializedData = $("form[id='form-alternatif']").serialize();// Ganti #form dengan ID formulir Anda
+        let serializedData = $("form[id='form-alternatif']").serialize(); // Ganti #form dengan ID formulir Anda
         let otherData = serializedData.split("&");
 
         otherData.forEach(function (item) {
@@ -139,22 +150,22 @@ $(document).ready(function () {
             data: formData,
             url: "/alternatif-update/" + $("#current_uuid").val(),
             type: "POST",
-            dataType: 'json',
+            dataType: "json",
             processData: false,
             contentType: false,
             success: function (response) {
                 if (response.errors) {
                     displayErrors(response.errors);
                 } else {
-                    table.ajax.reload()
-                    reset()
-                    $("#current_uuid").val("")
+                    table.ajax.reload();
+                    reset();
+                    $("#current_uuid").val("");
                     $("#modal-alternatif").modal("hide");
                     Swal.fire("Success!", response.success, "success");
                 }
-            }
+            },
         });
-    })
+    });
     //HAPUS DATA
     $("#table-alternatif").on("click", ".delete-button", function () {
         let uuid = $(this).attr("data-uuid");
@@ -232,7 +243,10 @@ $(document).ready(function () {
                 textAreaElement.after(feedbackElement);
             }
             inputElement.each(function () {
-                if (inputElement.attr("type") == "text" || inputElement.attr("type") == "number") {
+                if (
+                    inputElement.attr("type") == "text" ||
+                    inputElement.attr("type") == "number"
+                ) {
                     inputElement.on("click", function () {
                         $(this).removeClass("is-invalid");
                     });
@@ -270,8 +284,8 @@ $(document).ready(function () {
         let form = $("form[id='form-alternatif']").serializeArray();
         form.map((a) => {
             $(`#${a.name}`).val("");
-        })
-        $("#btn-action").html("")
-        $("#modal-alternatif").modal("hide")
+        });
+        $("#btn-action").html("");
+        $("#modal-alternatif").modal("hide");
     }
 });

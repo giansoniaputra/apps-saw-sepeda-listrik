@@ -16,6 +16,7 @@
                         <th>Kode</th>
                         <th>Alternatif</th>
                         <th>Keterangan</th>
+                        <th>Gambar</th>
                         <th>Action</th>
                     </thead>
                     <tbody>
