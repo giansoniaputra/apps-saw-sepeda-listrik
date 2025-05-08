@@ -39,29 +39,29 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="batrai" class="form-label">Baterai</label>
-                                <input type="number" name="batrai" id="batrai" class="form-control"
+                                <input type="text" name="batrai" id="batrai" class="form-control"
                                     placeholder="" />
                             </div>
                             <div class="form-group mb-3">
                                 <label for="power" class="form-label">Power</label>
-                                <input type="number" name="power" id="power" class="form-control"
+                                <input type="text" name="power" id="power" class="form-control"
                                     placeholder="" />
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group mb-3">
                                 <label for="kecepatan" class="form-label">Kecepatan</label>
-                                <input type="number" name="kecepatan" id="kecepatan" class="form-control"
+                                <input type="text" name="kecepatan" id="kecepatan" class="form-control"
                                     placeholder="" />
                             </div>
                             <div class="form-group mb-3">
                                 <label for="jarak" class="form-label">Jarak</label>
-                                <input type="number" name="jarak" id="jarak" class="form-control"
+                                <input type="text" name="jarak" id="jarak" class="form-control"
                                     placeholder="" />
                             </div>
                             <div class="form-group mb-3">
                                 <label for="daya" class="form-label">Daya</label>
-                                <input type="number" name="daya" id="daya" class="form-control"
+                                <input type="text" name="daya" id="daya" class="form-control"
                                     placeholder="" />
                             </div>
                             <div class="mb-3">
