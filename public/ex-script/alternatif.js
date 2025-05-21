@@ -23,11 +23,12 @@ $(document).ready(function () {
                 data: "alternatif",
             },
             {
-                data: "type",
-            },
-            {
                 data: "keterangan",
             },
+            {
+                data: "type",
+            },
+
             {
                 data: null,
                 render: (data) => {

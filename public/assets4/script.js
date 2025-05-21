@@ -139,13 +139,13 @@ $(document).ready(function () {
 
                 // } else {
                 Swal.fire({
-                    title: alternatif['keterangan'],
-                    html: `<p>${alternatif['keterangan']} adalah rekomendasi speda listrik terbaik untuk anda dengan<br>
-                    Harga: ${alternatif['harga']} <br>
-                    Daya: ${alternatif['daya']} <br>
-                    Jarak: ${alternatif['jarak']} <br>
-                    Kecepatan: ${alternatif['kecepatan']} <br>
-                    Power: ${alternatif['power']} <br>
+                    title: alternatif['type'],
+                    html: `<p>${alternatif['type']} adalah rekomendasi speda listrik terbaik untuk anda dengan<br>
+                    Harga: Rp. ${alternatif['harga']} <br>
+                    Daya: ${alternatif['daya']} Kg<br>
+                    Jarak: ${alternatif['jarak']} Km<br>
+                    Kecepatan: ${alternatif['kecepatan']} Km/h<br>
+                    Power: ${alternatif['power']} Watt<br>
                     Type: ${alternatif['type']} <br>
                     Baterai: ${alternatif['batrai']} <br>
                     </p>`,
@@ -175,16 +175,7 @@ $(document).ready(function () {
                 let no = 0;
                 response.hasil.ranking.map((a, b) => {
                     if (a[0] != rangking[0][0]) {
-                        if (a[0] == alternatif.keterangan) {
-                            let nilai = a[1];
-                            response.hasil.ranking.map((b) => {
-                                if (nilai > b[1]) {
-                                    keterangan = `<span class="text-info">${rangking[0][0]}</span>`
-                                }
-                            })
-                        } else {
-                            var keterangan = `<span>${a[0]}</span>`
-                        }
+                        var keterangan = `<span class="${(alternatif.keterangan == a[0]) ? 'text-info' : ''}">${a[0]}</span>`
                         if (keterangan !== undefined) {
                             let newNo = no + 1;
                             table3 += `<tr>

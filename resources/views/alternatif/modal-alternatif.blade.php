@@ -22,12 +22,12 @@
                                 <input type="number" id="alternatif" name="alternatif" class="form-control" placeholder="Masukan Hanya Angka Saja">
                             </div>
                             <div class="form-group mb-3">
-                                <label for="type" class="form-label">Nama Sepeda</label>
-                                <input type="text" name="type" id="type" class="form-control" placeholder="" />
+                                <label for="keterangan" class="form-label">Nama Sepeda</label>
+                                <input type="text" name="keterangan" id="keterangan" class="form-control" placeholder="" />
                             </div>
                             <div class="form-group mb-3">
-                                <label for="keterangan">Type</label>
-                                <textarea name="keterangan" class="form-control" id="keterangan" placeholder="Masukan Nama Motor"></textarea>
+                                <label for="type">Type</label>
+                                <textarea name="type" class="form-control" id="type" placeholder="Masukan Nama Motor"></textarea>
 
                             </div>
                             <div class="form-group mb-3">
