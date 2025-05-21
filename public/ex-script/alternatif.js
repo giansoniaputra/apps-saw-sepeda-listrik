@@ -23,6 +23,9 @@ $(document).ready(function () {
                 data: "alternatif",
             },
             {
+                data: "type",
+            },
+            {
                 data: "keterangan",
             },
             {

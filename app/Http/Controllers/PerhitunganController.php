@@ -244,126 +244,243 @@ class PerhitunganController extends Controller
 
     public function normalisasi_user(Request $request)
     {
-        $sum_kriteria = Kriteria::count('id');
-        $array_pembilang = [];
-        $array_pembagi = [];
-        $count_alternatif = Alternatif::count('id');
-        $kriterias = Kriteria::orderBy('kode', 'asc')->get();
-        $alternatifs = Alternatif::orderBy('alternatif', 'asc')->get();
-        $mooras = Perhitungan::all();
-        $last_id = Alternatif::orderBy('alternatif', 'desc')->first();
-        $last_id_moora = Perhitungan::orderBy('id', 'desc')->first();
-        // MENAMBAH ALTERNATIF BARU
-        $newRecord = new Alternatif();
-        $newRecord->id = $last_id->id + 1;
-        $newRecord->uuid = Str::orderedUuid();
-        $newRecord->alternatif = count($alternatifs) + 1;
-        $newRecord->keterangan = 'Pilihan Anda';
-        $newRecord->created_at = Carbon::now();
-        $newRecord->updated_at = Carbon::now();
-        $alternatifs->push($newRecord);
-        // MENAMBAH ALTERNATIF BARU
-        // MENAMBAH PERHITUNGAN BARU
-        $i = 0;
-        foreach ($request->all() as $index => $row) {
-            $newMoora = new Perhitungan();
-            $newMoora->id =  $last_id_moora->id++;
-            $newMoora->uuid = Str::orderedUuid();
-            $newMoora->alternatif_uuid = $alternatifs[count($alternatifs) - 1]->uuid;
-            $newMoora->kriteria_uuid = $kriterias[$i++]->uuid;
-            $newMoora->bobot = $row;
-            $newMoora->created_at = Carbon::now();
-            $newMoora->updated_at = Carbon::now();
-            $mooras->push($newMoora);
-        }
-        // $query = $mooras->where('alternatif_uuid', $alternatifs[5]->uuid)->first();
-        // return response()->json(['alternatifs' => $mooras]);
-        // return response()->json(['success' => $alternatifs[5]->uuid . '  /  ' . $kriterias[1]->uuid]);
-        // MENAMBAH PERHITUNGAN BARU
+        $data = [
+            'title' => 'Normalisasi',
+            'perhitungan' => DB::table('perhitungans as a')
+                ->join('alternatifs as b', 'a.alternatif_uuid', '=', 'b.uuid')
+                ->select('a.*', 'b.alternatif', 'b.keterangan')
+                ->orderBy('b.alternatif', 'asc'),
+            'kriterias' => Kriteria::orderBy('kode', 'asc')->get(),
+            'alternatifs' => Alternatif::orderBy('alternatif', 'asc')->get(),
+            'sum_kriteria' => Kriteria::count('id'),
+        ];
         $elements = '';
         $array_bobot = [];
-        foreach ($alternatifs as $alternatif) {
+        foreach ($data['alternatifs'] as $alternatif) {
             $elements .= "<tr><td>A$alternatif->alternatif</td>
             <td>$alternatif->keterangan</td>";
-            foreach ($kriterias as $kriteria) {
-                $bobots = $mooras->where('alternatif_uuid', $alternatif->uuid)->where('kriteria_uuid', $kriteria->uuid);
+            foreach ($data['kriterias'] as $kriteria) {
+                $bobots = DB::table('perhitungans')
+                    ->where('kriteria_uuid', $kriteria->uuid)
+                    ->where('alternatif_uuid', $alternatif->uuid)
+                    ->get();
                 foreach ($bobots as $bobot) {
                     if ($kriteria->atribut == 'BENEFIT') {
-                        $perhitung = $mooras->where('kriteria_uuid', $kriteria->uuid)->sortByDesc('bobot')->first();
+                        $perhitung = Perhitungan::where('kriteria_uuid', $kriteria->uuid)->orderBy('bobot', 'desc')->first();
                         $hasil = $bobot->bobot / $perhitung->bobot;
                     } else {
-                        $perhitung = $mooras->where('kriteria_uuid', $kriteria->uuid)->sortBy('bobot')->first();
+                        $perhitung = Perhitungan::where('kriteria_uuid', $kriteria->uuid)->orderBy('bobot')->first();
                         $hasil = $perhitung->bobot / $bobot->bobot;
                     }
                     $bobot_kriteria = round($hasil, 3);
+                    $elements .= "<td class=\"text-center\" id=\"nilai-bobot\">
+                                        <p class=\"p-bobot\">" . $bobot_kriteria . "</p>
+                                        <form action=\"javascript:;\" id=\"form-update-bobot\">
+                                            <input type=\"number\" class=\"d-none input-bobot\" data-uuid=" . $bobot_kriteria . " value=\"" . $bobot_kriteria . "\" style=\"width:6vh\">
+                                        </form>
+                                    </td>";
                     $array_bobot[] = $bobot_kriteria;
                 }
             }
             $elements .= "</tr>";
         }
-        // return response()->json(['data' => [
-        //     'alternatif' => $alternatifs,
-        //     'kriteria' => $kriterias,
-        // ]]);
         $data['elements'] = $elements;
         //MENGHITUNG RANKING-----------------------------------------------
-        $bobot_kriteria = array_chunk($array_bobot, Kriteria::count('id'));
+        $bobot_kriteria = array_chunk($array_bobot, $data['sum_kriteria']);
 
-        //Mengambil Bobot Kriteria
-        $bobot = [];
-        foreach ($kriterias as $kriteria) {
-            // $bobot[] = $kriteria->bobot / 100;
-            $bobot[] = $kriteria->bobot;
+        // PERHITUNGAN SLIDER
+        $pembagi = 0;
+        foreach ($request->all() as $row) {
+            $pembagi += $row;
         }
-        //Meng kalikan bobot dengan normalisasi
+        $normalisasi_bobot = [];
+        foreach ($request->all() as $row) {
+            $normalisasi_bobot[] = round(($row / $pembagi), 2, PHP_ROUND_HALF_EVEN);
+        }
+
         $hasil_kali = [];
         for ($i = 0; $i < count($bobot_kriteria); $i++) {
-            for ($j = 0; $j < count($bobot); $j++) {
-                $hasil_kali[] = round(($bobot_kriteria[$i][$j] * $bobot[$j]), 4, PHP_ROUND_HALF_EVEN);
+            for ($j = 0; $j < count($normalisasi_bobot); $j++) {
+                $hasil_kali[] = round(($bobot_kriteria[$i][$j] * $normalisasi_bobot[$j]), 6, PHP_ROUND_HALF_EVEN);
             }
         }
-        //hasil perkalian di pecah menjadi array muti dimensi
-        $pecah_hasil = array_chunk($hasil_kali, Kriteria::count('id'));
+        $pecah_hasil = array_chunk($hasil_kali, $data['sum_kriteria']);
 
         // Perkalian Semua Array
         $ranking = [];
         for ($u = 0; $u < count($pecah_hasil); $u++) {
-            $ranking[] = round(array_sum($pecah_hasil[$u]), 4);
+            $ranking[] = round(array_sum($pecah_hasil[$u]), 6, PHP_ROUND_HALF_EVEN);
         }
 
+        $ranking_terbesar = max($ranking);
+        $index_terbesar = array_search($ranking_terbesar, $ranking);
+
+        $alternatif_ranking = Alternatif::where('alternatif', $index_terbesar + 1)->first();
+
+
+        // //Mengambil Bobot Kriteria
+        // $bobot = [];
+        // foreach ($data['kriterias'] as $kriteria) {
+        //     // $bobot[] = $kriteria->bobot / 100;
+        //     $bobot[] = $kriteria->bobot;
+        // }
+        // //Meng kalikan bobot dengan normalisasi
+        // $hasil_kali = [];
+        // for ($i = 0; $i < count($bobot_kriteria); $i++) {
+        //     for ($j = 0; $j < count($bobot); $j++) {
+        //         $hasil_kali[] = round(($bobot_kriteria[$i][$j] * $bobot[$j]), 4, PHP_ROUND_HALF_EVEN);
+        //     }
+        // }
+        // //hasil perkalian di pecah menjadi array muti dimensi
+        // $pecah_hasil = array_chunk($hasil_kali, $data['sum_kriteria']);
+
+        // // Perkalian Semua Array
+        // $ranking = [];
+        // for ($u = 0; $u < count($pecah_hasil); $u++) {
+        //     $ranking[] = round(array_sum($pecah_hasil[$u]), 4);
+        // }
+
         //Merangking
-        $nama = $alternatifs->sortBy('alternatif');
+        $nama = Alternatif::orderBy('alternatif', 'asc')->get();
         $rangking_assoc = [];
         foreach ($ranking as $index => $nilai) {
-            $rangking_assoc[] = [$nama[$index]->keterangan, $nilai, $nama[$index]->alternatif, $nama[$index]->photo, $nama[$index]->harga];
+            $rangking_assoc[] = [$nama[$index]->keterangan, $nilai, $nama[$index]->alternatif];
         }
 
         $names = array_column($rangking_assoc, 0);
         $scores = array_column($rangking_assoc, 1);
         $alternatif = array_column($rangking_assoc, 2);
-        $photo = array_column($rangking_assoc, 3);
-        $harga = array_column($rangking_assoc, 4);
 
         // Menggunakan array_multisort untuk mengurutkan scores secara menurun
-        array_multisort($scores, SORT_DESC, $names, $alternatif, $photo, $harga);
+        array_multisort($scores, SORT_DESC, $names, $alternatif);
 
         // Menggabungkan kembali array setelah diurutkan
-        $final_ranking = array_map(function ($name, $score, $alternatif, $photo, $harga) {
-            return [$name, $score, $alternatif, $photo, rupiah($harga)];
-        }, $names, $scores, $alternatif, $photo, $harga);
+        $final_ranking = array_map(function ($name, $score, $alternatif) {
+            return [$name, $score, $alternatif];
+        }, $names, $scores, $alternatif);
 
         $data['ranking'] = $final_ranking;
 
-        return response()->json([
-            'hasil' => $data,
-            'pecah_hasil' => $pecah_hasil,
-            'hasil_kali' => $hasil_kali,
-            'data' => [
-                'kriteria' => $kriterias,
-                'alternatif' => $alternatifs
-            ]
-        ]);
+        return response()->json(['alternatif' => $alternatif_ranking, 'hasil' => $data]);
     }
+    // public function normalisasi_user(Request $request)
+    // {
+    //     $sum_kriteria = Kriteria::count('id');
+    //     $array_pembilang = [];
+    //     $array_pembagi = [];
+    //     $count_alternatif = Alternatif::count('id');
+    //     $kriterias = Kriteria::orderBy('kode', 'asc')->get();
+    //     $alternatifs = Alternatif::orderBy('alternatif', 'asc')->get();
+    //     $mooras = Perhitungan::all();
+    //     // $last_id = Alternatif::orderBy('alternatif', 'desc')->first();
+    //     // $last_id_moora = Perhitungan::orderBy('id', 'desc')->first();
+    //     // // MENAMBAH ALTERNATIF BARU
+    //     // $newRecord = new Alternatif();
+    //     // $newRecord->id = $last_id->id + 1;
+    //     // $newRecord->uuid = Str::orderedUuid();
+    //     // $newRecord->alternatif = count($alternatifs) + 1;
+    //     // $newRecord->keterangan = 'Pilihan Anda';
+    //     // $newRecord->created_at = Carbon::now();
+    //     // $newRecord->updated_at = Carbon::now();
+    //     // $alternatifs->push($newRecord);
+    //     // // MENAMBAH ALTERNATIF BARU
+    //     // // MENAMBAH PERHITUNGAN BARU
+    //     // $i = 0;
+    //     // foreach ($request->all() as $index => $row) {
+    //     //     $newMoora = new Perhitungan();
+    //     //     $newMoora->id =  $last_id_moora->id++;
+    //     //     $newMoora->uuid = Str::orderedUuid();
+    //     //     $newMoora->alternatif_uuid = $alternatifs[count($alternatifs) - 1]->uuid;
+    //     //     $newMoora->kriteria_uuid = $kriterias[$i++]->uuid;
+    //     //     $newMoora->bobot = $row;
+    //     //     $newMoora->created_at = Carbon::now();
+    //     //     $newMoora->updated_at = Carbon::now();
+    //     //     $mooras->push($newMoora);
+    //     // }
+    //     // $query = $mooras->where('alternatif_uuid', $alternatifs[5]->uuid)->first();
+    //     // return response()->json(['alternatifs' => $mooras]);
+    //     // return response()->json(['success' => $alternatifs[5]->uuid . '  /  ' . $kriterias[1]->uuid]);
+    //     // MENAMBAH PERHITUNGAN BARU
+    //     $elements = '';
+    //     $array_bobot = [];
+    //     foreach ($alternatifs as $alternatif) {
+    //         $elements .= "<tr><td>A$alternatif->alternatif</td>
+    //         <td>$alternatif->keterangan</td>";
+    //         foreach ($kriterias as $kriteria) {
+    //             $bobots = $mooras->where('alternatif_uuid', $alternatif->uuid)->where('kriteria_uuid', $kriteria->uuid);
+    //             foreach ($bobots as $bobot) {
+    //                 if ($kriteria->atribut == 'BENEFIT') {
+    //                     $perhitung = $mooras->where('kriteria_uuid', $kriteria->uuid)->sortByDesc('bobot')->first();
+    //                     $hasil = $bobot->bobot / $perhitung->bobot;
+    //                 } else {
+    //                     $perhitung = $mooras->where('kriteria_uuid', $kriteria->uuid)->sortBy('bobot')->first();
+    //                     $hasil = $perhitung->bobot / $bobot->bobot;
+    //                 }
+    //                 $bobot_kriteria = round($hasil, 3);
+    //                 $array_bobot[] = $bobot_kriteria;
+    //             }
+    //         }
+    //         $elements .= "</tr>";
+    //     }
+    //     $data['elements'] = $elements;
+    //     //MENGHITUNG RANKING-----------------------------------------------
+    //     $bobot_kriteria = array_chunk($array_bobot, Kriteria::count('id'));
+
+    //     //Mengambil Bobot Kriteria
+    //     $bobot = [];
+    //     foreach ($kriterias as $kriteria) {
+    //         // $bobot[] = $kriteria->bobot / 100;
+    //         $bobot[] = $kriteria->bobot;
+    //     }
+    //     //Meng kalikan bobot dengan normalisasi
+    //     $hasil_kali = [];
+    //     for ($i = 0; $i < count($bobot_kriteria); $i++) {
+    //         for ($j = 0; $j < count($bobot); $j++) {
+    //             $hasil_kali[] = round(($bobot_kriteria[$i][$j] * $bobot[$j]), 4, PHP_ROUND_HALF_EVEN);
+    //         }
+    //     }
+    //     //hasil perkalian di pecah menjadi array muti dimensi
+    //     $pecah_hasil = array_chunk($hasil_kali, Kriteria::count('id'));
+
+    //     // Perkalian Semua Array
+    //     $ranking = [];
+    //     for ($u = 0; $u < count($pecah_hasil); $u++) {
+    //         $ranking[] = round(array_sum($pecah_hasil[$u]), 4);
+    //     }
+
+    //     //Merangking
+    //     $nama = $alternatifs->sortBy('alternatif');
+    //     $rangking_assoc = [];
+    //     foreach ($ranking as $index => $nilai) {
+    //         $rangking_assoc[] = [$nama[$index]->keterangan, $nilai, $nama[$index]->alternatif, $nama[$index]->photo, $nama[$index]->harga];
+    //     }
+
+    //     $names = array_column($rangking_assoc, 0);
+    //     $scores = array_column($rangking_assoc, 1);
+    //     $alternatif = array_column($rangking_assoc, 2);
+    //     $photo = array_column($rangking_assoc, 3);
+    //     $harga = array_column($rangking_assoc, 4);
+
+    //     // Menggunakan array_multisort untuk mengurutkan scores secara menurun
+    //     array_multisort($scores, SORT_DESC, $names, $alternatif, $photo, $harga);
+
+    //     // Menggabungkan kembali array setelah diurutkan
+    //     $final_ranking = array_map(function ($name, $score, $alternatif, $photo, $harga) {
+    //         return [$name, $score, $alternatif, $photo, rupiah($harga)];
+    //     }, $names, $scores, $alternatif, $photo, $harga);
+
+    //     $data['ranking'] = $final_ranking;
+
+    //     return response()->json([
+    //         'hasil' => $data,
+    //         'pecah_hasil' => $pecah_hasil,
+    //         'hasil_kali' => $hasil_kali,
+    //         'data' => [
+    //             'kriteria' => $kriterias,
+    //             'alternatif' => $alternatifs
+    //         ]
+    //     ]);
+    // }
 
     function transpose($matrix)
     {

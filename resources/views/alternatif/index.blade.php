@@ -15,7 +15,8 @@
                     <thead>
                         <th>Kode</th>
                         <th>Alternatif</th>
-                        <th>Keterangan</th>
+                        <th>Nama Motor</th>
+                        <th>Type</th>
                         <th>Gambar</th>
                         <th>Action</th>
                     </thead>
@@ -27,5 +28,5 @@
     </div>
 </div>
 <script src="/ex-script/alternatif.js"></script>
-@include('/alternatif.modal-alternatif')
+@include('alternatif.modal-alternatif')
 @endsection
