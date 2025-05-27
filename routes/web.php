@@ -95,7 +95,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/normalisasi-user', [PerhitunganController::class, 'normalisasi_user']);
+Route::post('/normalisasi-user', [PerhitunganController::class, 'normalisasi_user']);
+
+
 
 
 // Route::get('/masukan-sub', function () {

@@ -9,6 +9,7 @@
     <script src="/assets4/jquery.js"></script>
     <link rel="stylesheet" href="/assets/sweetalert2.min.css">
     <script src="/assets/sweetalert2.all.min.js"></script>
+    <meta name="token" content="{{ csrf_token() }}">
     <title>Rekomendasi Sepeda Listrik</title>
     <style>
         .spinner {
@@ -83,6 +84,7 @@
             <div class="card d-flex justify-conten-center align-items-center card-spinner">
                 <div class="spinner" style="position:relative;z-index: 101;"></div>
             </div>`;
+        const csrfToken = document.querySelector("meta[name='token']").getAttribute('content')
 
     </script>
 </head>
@@ -103,27 +105,8 @@
             </p>
             <img src="https://res.cloudinary.com/alexandracaulea/image/upload/v1585333913/illustration_x46ict.svg" alt="" aria-hidden="true" class="illustration" />
         </header>
-        <main class="main">
-            <form action="javascript:;" id="form-rekomendasi">
-                <div class="row">
-                    @foreach ($kriterias as $key => $kriteria)
-                    @php
-                    $subs = get_sub_kriteria($kriteria->uuid);
-                    @endphp
-                    <div class="col-sm-6">
-                        <div class="mb-3">
-                            <label for="c{{ $kriteria->kode }}">{{ $kriteria->kriteria }}</label>
-                            @if ($kriteria->atribut == 'BENEFIT')
-                            <input type="range" name="c{{ $kriteria->kode }}" min="1" max="5">
-                            @else
-                            <input type="range" name="c{{ $kriteria->kode }}" min="1" max="5" style="direction: rtl;">
-                            @endif
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </form>
-            <button class="btn btn-primary" id="search-rekomendasi">Lihat Rekomendasi</button>
+        <main class="main" id="render-page">
+
         </main>
     </div>
 

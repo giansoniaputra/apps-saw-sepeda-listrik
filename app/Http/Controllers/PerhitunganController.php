@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 
 class PerhitunganController extends Controller
 {
@@ -244,6 +245,7 @@ class PerhitunganController extends Controller
 
     public function normalisasi_user(Request $request)
     {
+        $response = [];
         $data = [
             'title' => 'Normalisasi',
             'perhitungan' => DB::table('perhitungans as a')
@@ -254,68 +256,106 @@ class PerhitunganController extends Controller
             'alternatifs' => Alternatif::orderBy('alternatif', 'asc')->get(),
             'sum_kriteria' => Kriteria::count('id'),
         ];
+        $perhitungan = Perhitungan::all();
         $elements = '';
         $array_bobot = [];
         foreach ($data['alternatifs'] as $alternatif) {
             $elements .= "<tr><td>A$alternatif->alternatif</td>
             <td>$alternatif->keterangan</td>";
-            foreach ($data['kriterias'] as $kriteria) {
-                $bobots = DB::table('perhitungans')
-                    ->where('kriteria_uuid', $kriteria->uuid)
-                    ->where('alternatif_uuid', $alternatif->uuid)
-                    ->get();
-                foreach ($bobots as $bobot) {
+            foreach ($data['kriterias'] as $index => $kriteria) {
+                $bobots = $perhitungan->where('alternatif_uuid', $alternatif->uuid)->where('kriteria_uuid', $kriteria->uuid);
+                foreach ($bobots as $i =>  $bobot) {
                     if ($kriteria->atribut == 'BENEFIT') {
-                        $perhitung = Perhitungan::where('kriteria_uuid', $kriteria->uuid)->orderBy('bobot', 'desc')->first();
+                        $perhitung = $perhitungan->where('kriteria_uuid', $kriteria->uuid)->sortByDesc('bobot')->first();
                         $hasil = $bobot->bobot / $perhitung->bobot;
                     } else {
-                        $perhitung = Perhitungan::where('kriteria_uuid', $kriteria->uuid)->orderBy('bobot')->first();
+                        $perhitung = $perhitungan->where('kriteria_uuid', $kriteria->uuid)->sortBy('bobot')->first();
                         $hasil = $perhitung->bobot / $bobot->bobot;
                     }
                     $bobot_kriteria = round($hasil, 3);
-                    $elements .= "<td class=\"text-center\" id=\"nilai-bobot\">
-                                        <p class=\"p-bobot\">" . $bobot_kriteria . "</p>
-                                        <form action=\"javascript:;\" id=\"form-update-bobot\">
-                                            <input type=\"number\" class=\"d-none input-bobot\" data-uuid=" . $bobot_kriteria . " value=\"" . $bobot_kriteria . "\" style=\"width:6vh\">
-                                        </form>
-                                    </td>";
                     $array_bobot[] = $bobot_kriteria;
                 }
             }
             $elements .= "</tr>";
         }
-        $data['elements'] = $elements;
+        $filter = [];
+        foreach ($data['alternatifs'] as $i => $alternatif) {
+            $nilai_filter = [];
+            foreach ($data['kriterias'] as $index => $kriteria) {
+                $pembagi_bobot_filter = Perhitungan::where('alternatif_uuid', $alternatif->uuid)->where('kriteria_uuid', $kriteria->uuid)->first();
+                $nilai_filter[] = filter($index, $pembagi_bobot_filter->bobot);
+            }
+            $filter[] = (array_sum($nilai_filter) >= 6) ? 1 : 0;
+            // $filter[] = array_sum($nilai_filter);
+        }
         //MENGHITUNG RANKING-----------------------------------------------
         $bobot_kriteria = array_chunk($array_bobot, $data['sum_kriteria']);
+        // $response['normalisasi'] = $bobot_kriteria;
+        // $response['filter'] = $filter;
 
+
+
+        $response['filter'] = $filter;
         // PERHITUNGAN SLIDER
-        $pembagi = 0;
-        foreach ($request->all() as $row) {
-            $pembagi += $row;
+        // $pembagi = 0;
+        // foreach ($request->bobot_kriteria as $row) {
+        //     $pembagi += $row;
+        // }
+        // $normalisasi_bobot = [];
+        // foreach ($request->all() as $row) {
+        //     $normalisasi_bobot[] = round(($row / $pembagi), 2, PHP_ROUND_HALF_EVEN);
+        // }
+        $request_bobot = [];
+        foreach ($request->bobot_kriteria as $row) {
+            $request_bobot[] = round($row / array_sum($request->bobot_kriteria), 2, PHP_ROUND_HALF_EVEN);
         }
-        $normalisasi_bobot = [];
-        foreach ($request->all() as $row) {
-            $normalisasi_bobot[] = round(($row / $pembagi), 2, PHP_ROUND_HALF_EVEN);
-        }
-
         $hasil_kali = [];
         for ($i = 0; $i < count($bobot_kriteria); $i++) {
-            for ($j = 0; $j < count($normalisasi_bobot); $j++) {
-                $hasil_kali[] = round(($bobot_kriteria[$i][$j] * $normalisasi_bobot[$j]), 6, PHP_ROUND_HALF_EVEN);
+            for ($j = 0; $j < count($request_bobot); $j++) {
+                $hasil_kali[] = round(($bobot_kriteria[$i][$j] * $request_bobot[$j]), 4, PHP_ROUND_HALF_EVEN);
             }
         }
         $pecah_hasil = array_chunk($hasil_kali, $data['sum_kriteria']);
-
-        // Perkalian Semua Array
-        $ranking = [];
-        for ($u = 0; $u < count($pecah_hasil); $u++) {
-            $ranking[] = round(array_sum($pecah_hasil[$u]), 6, PHP_ROUND_HALF_EVEN);
+        $preferensi = [];
+        for ($i = 0; $i < count($pecah_hasil); $i++) {
+            if ($filter[$i] == 1) {
+                $altern = Alternatif::where('alternatif', $i + 1)->first();
+                $preferensi[] = [$altern, array_sum($pecah_hasil[$i])];
+            }
         }
 
-        $ranking_terbesar = max($ranking);
-        $index_terbesar = array_search($ranking_terbesar, $ranking);
+        // $response['preferensi'] = $preferensi;
+        // $response['bobot_kriteria'] = $bobot_kriteria;
+        // $response['pecah_hasil'] = $pecah_hasil;
 
-        $alternatif_ranking = Alternatif::where('alternatif', $index_terbesar + 1)->first();
+        $rangking_assoc = [];
+        foreach ($preferensi as $index => $nilai) {
+            $rangking_assoc[] = [$nilai[0]->keterangan, round($nilai[1], 4, PHP_ROUND_HALF_EVEN), $nilai[0]->alternatif];
+        }
+
+        $names = array_column($rangking_assoc, 0);
+        $scores = array_column($rangking_assoc, 1);
+        $alternatif = array_column($rangking_assoc, 2);
+
+        // Menggunakan array_multisort untuk mengurutkan scores secara menurun
+        array_multisort($scores, SORT_DESC, $names, $alternatif);
+        $response['rangking_assoc'] = $rangking_assoc;
+
+        // Menggabungkan kembali array setelah diurutkan
+        $final_ranking = array_map(function ($name, $score, $alternatif) {
+            return [$name, $score, $alternatif];
+        }, $names, $scores, $alternatif);
+
+        // // Perkalian Semua Array
+        // $ranking = [];
+        // for ($u = 0; $u < count($pecah_hasil); $u++) {
+        //     $ranking[] = round(array_sum($pecah_hasil[$u]), 6, PHP_ROUND_HALF_EVEN);
+        // }
+
+        // $ranking_terbesar = max($ranking);
+        // $index_terbesar = array_search($ranking_terbesar, $ranking);
+
+        // $alternatif_ranking = Alternatif::where('alternatif', $index_terbesar + 1)->first();
 
 
         // //Mengambil Bobot Kriteria
@@ -340,28 +380,37 @@ class PerhitunganController extends Controller
         //     $ranking[] = round(array_sum($pecah_hasil[$u]), 4);
         // }
 
-        //Merangking
-        $nama = Alternatif::orderBy('alternatif', 'asc')->get();
-        $rangking_assoc = [];
-        foreach ($ranking as $index => $nilai) {
-            $rangking_assoc[] = [$nama[$index]->keterangan, $nilai, $nama[$index]->alternatif];
-        }
+        // //Merangking
+        // $nama = Alternatif::orderBy('alternatif', 'asc')->get();
+        // $rangking_assoc = [];
+        // foreach ($ranking as $index => $nilai) {
+        //     $rangking_assoc[] = [$nama[$index]->keterangan, $nilai, $nama[$index]->alternatif];
+        // }
 
-        $names = array_column($rangking_assoc, 0);
-        $scores = array_column($rangking_assoc, 1);
-        $alternatif = array_column($rangking_assoc, 2);
+        // $names = array_column($rangking_assoc, 0);
+        // $scores = array_column($rangking_assoc, 1);
+        // $alternatif = array_column($rangking_assoc, 2);
 
-        // Menggunakan array_multisort untuk mengurutkan scores secara menurun
-        array_multisort($scores, SORT_DESC, $names, $alternatif);
+        // // Menggunakan array_multisort untuk mengurutkan scores secara menurun
+        // array_multisort($scores, SORT_DESC, $names, $alternatif);
 
-        // Menggabungkan kembali array setelah diurutkan
-        $final_ranking = array_map(function ($name, $score, $alternatif) {
-            return [$name, $score, $alternatif];
-        }, $names, $scores, $alternatif);
+        // // Menggabungkan kembali array setelah diurutkan
+        // $final_ranking = array_map(function ($name, $score, $alternatif) {
+        //     return [$name, $score, $alternatif];
+        // }, $names, $scores, $alternatif);
 
-        $data['ranking'] = $final_ranking;
+        // $data['ranking'] = $final_ranking;
 
-        return response()->json(['alternatif' => $alternatif_ranking, 'hasil' => $data]);
+        // return response()->json(['alternatif' => $alternatif_ranking, 'hasil' => $data]);
+
+        $view = View::make('partial.normalisasi', [
+            'alternatifs' => $data['alternatifs'],
+            'kriteria' => $data['kriterias'],
+            'ranking' => $final_ranking,
+        ])->render();
+        $response['view'] = $view;
+        $response['alternatif'] = Alternatif::where('alternatif', $final_ranking[0][2])->first();
+        return response()->json($response);
     }
     // public function normalisasi_user(Request $request)
     // {
