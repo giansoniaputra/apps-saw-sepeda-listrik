@@ -254,29 +254,33 @@ $(document).ready(function () {
             success: function (response) {
                 $("#spinner").html("")
                 let alternatif = response.alternatif
+                if (alternatif != '') {
 
-                Swal.fire({
-                    title: alternatif.keterangan,
-                    html: `<p>${alternatif.keterangan} adalah rekomendasi speda listrik terbaik untuk anda dengan<br>
+                    Swal.fire({
+                        title: alternatif.type,
+                        html: `<p>${alternatif.type} adalah rekomendasi speda listrik terbaik untuk anda dengan<br>
+                        Nama Sepeda: ${alternatif.keterangan} <br>
                         Harga: Rp. ${alternatif.harga} <br>
                         Daya: ${alternatif.daya} Kg<br>
                         Jarak: ${alternatif.jarak} Km<br>
                         Kecepatan: ${alternatif.kecepatan} Km/h<br>
                         Power: ${alternatif.power} Watt<br>
-                        Type: ${alternatif.type} <br>
                         Baterai: ${alternatif.batrai} <br>
                         </p>`,
-                    imageUrl: "/storage/" + alternatif.photo,
-                    imageWidth: 400,
-                    imageHeight: 200,
-                    imageAlt: "Custom image",
-                    customClass: {
-                        popup: 'swal-left-align'
-                    }
-                });
+                        imageUrl: "/storage/" + alternatif.photo,
+                        imageWidth: 400,
+                        imageHeight: 200,
+                        imageAlt: "Custom image",
+                        customClass: {
+                            popup: 'swal-left-align'
+                        }
+                    });
 
-                $("#rangking").html(response.view);
-                $("#modal-rekomendasi").modal("show")
+                    $("#rangking").html(response.view);
+                    $("#modal-rekomendasi").modal("show")
+                } else {
+                    Swal.fire("Perhatian!", "Tidak Ada Rekomendasi Untuk Anda!", "warning");
+                }
 
             }
         })

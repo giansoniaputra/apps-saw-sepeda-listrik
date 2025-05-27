@@ -279,11 +279,12 @@ class PerhitunganController extends Controller
             $elements .= "</tr>";
         }
         $filter = [];
+        $c = $request->except(['bobot_kriteria', '_token']);
         foreach ($data['alternatifs'] as $i => $alternatif) {
             $nilai_filter = [];
             foreach ($data['kriterias'] as $index => $kriteria) {
                 $pembagi_bobot_filter = Perhitungan::where('alternatif_uuid', $alternatif->uuid)->where('kriteria_uuid', $kriteria->uuid)->first();
-                $nilai_filter[] = filter($index, $pembagi_bobot_filter->bobot);
+                $nilai_filter[] = filter($c["c" . $index + 1], $pembagi_bobot_filter->bobot);
             }
             $filter[] = (array_sum($nilai_filter) >= 6) ? 1 : 0;
             // $filter[] = array_sum($nilai_filter);
@@ -292,6 +293,7 @@ class PerhitunganController extends Controller
         $bobot_kriteria = array_chunk($array_bobot, $data['sum_kriteria']);
         // $response['normalisasi'] = $bobot_kriteria;
         // $response['filter'] = $filter;
+        // return response()->json(['filter' => $filter]);
 
 
 
@@ -345,7 +347,7 @@ class PerhitunganController extends Controller
         $final_ranking = array_map(function ($name, $score, $alternatif) {
             return [$name, $score, $alternatif];
         }, $names, $scores, $alternatif);
-
+        // return response()->json(['final_ranking' => $filter]);
         // // Perkalian Semua Array
         // $ranking = [];
         // for ($u = 0; $u < count($pecah_hasil); $u++) {
@@ -409,7 +411,11 @@ class PerhitunganController extends Controller
             'ranking' => $final_ranking,
         ])->render();
         $response['view'] = $view;
-        $response['alternatif'] = Alternatif::where('alternatif', $final_ranking[0][2])->first();
+        if (count($final_ranking) > 0) {
+            $response['alternatif'] = Alternatif::where('alternatif', $final_ranking[0][2])->first();
+        } else {
+            $response['alternatif'] = '';
+        }
         return response()->json($response);
     }
     // public function normalisasi_user(Request $request)
