@@ -101,7 +101,7 @@
         <header class="header">
             <h1 id="title" class="header__title">Sepeda Listrik</h1>
             <p id="description" class="header__description">
-                Silahkan Pilih Kriteria Speda Listrik yang Anda Inginkan!
+                Silahkan Pilih Kriteria Sepeda Listrik yang Anda Inginkan!
             </p>
             <img src="https://res.cloudinary.com/alexandracaulea/image/upload/v1585333913/illustration_x46ict.svg" alt="" aria-hidden="true" class="illustration" />
         </header>
@@ -115,7 +115,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Rekomendasi Speda Listrik</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Rekomendasi Sepeda Listrik</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

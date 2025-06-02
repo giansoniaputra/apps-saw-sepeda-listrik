@@ -117,7 +117,7 @@ $(document).ready(function () {
                                             <tr>
                                                 <td>Alternatif</td>
                                                 <td>Keterangan</td>
-                                                <td>Bobot</td>
+                                                <td>Nilai</td>
                                                 <td>Ranking</td>
                                             </tr>
                                         </thead>

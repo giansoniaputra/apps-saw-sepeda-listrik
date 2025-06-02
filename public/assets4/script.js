@@ -37,7 +37,7 @@
 //                 } else {
 //                     Swal.fire({
 //                         title: rangking[0][0],
-//                         text: `${rangking[0][0]} adalah rekomendasi speda listrik terbaik untuk anda dengan harga ${rangking[0][2]}`,
+//                         text: `${rangking[0][0]} adalah rekomendasi speda listrik terbaik untuk anda dengan harga ${rangking[0][4]}`,
 //                         imageUrl: "/storage/" + rangking[0][1],
 //                         imageWidth: 400,
 //                         imageHeight: 200,
@@ -138,25 +138,31 @@
 //                 //     // Swal.fire("Sepeda Listrik " + response.end[0], "Adalah rekomendasi Sepeda Listrik terbaik", "success");
 
 //                 // } else {
-//                 Swal.fire({
-//                     title: alternatif['type'],
-//                     html: `<p>${alternatif['type']} adalah rekomendasi speda listrik terbaik untuk anda dengan<br>
-//                     Harga: Rp. ${alternatif['harga']} <br>
-//                     Daya: ${alternatif['daya']} Kg<br>
-//                     Jarak: ${alternatif['jarak']} Km<br>
-//                     Kecepatan: ${alternatif['kecepatan']} Km/h<br>
-//                     Power: ${alternatif['power']} Watt<br>
-//                     Type: ${alternatif['type']} <br>
-//                     Baterai: ${alternatif['batrai']} <br>
-//                     </p>`,
-//                     imageUrl: "/storage/" + alternatif['photo'],
-//                     imageWidth: 400,
-//                     imageHeight: 200,
-//                     imageAlt: "Custom image",
-//                     customClass: {
-//                         popup: 'swal-left-align'
-//                     }
-//                 });
+//               Swal.fire({
+//    title: alternatif.type,
+  //  html: `
+    //    <div style="text-align: justify; font-size: 14px;">
+      //      <strong>${alternatif.type}</strong> adalah rekomendasi sepeda listrik terbaik untuk Anda. Berikut detail spesifikasinya:
+          //  <ul style="padding-left: 16px; margin-top: 10px;">
+        //        <li><strong>Nama Sepeda:</strong> ${alternatif.keterangan}</li>
+            //    <li><strong>Harga:</strong> Rp. ${parseInt(alternatif.harga).toLocaleString('id-ID')}</li>
+              //  <li><strong>Daya Angkut:</strong> ${alternatif.daya} Kg</li>
+               // <li><strong>Jarak Tempuh:</strong> ${alternatif.jarak} Km</li>
+               // <li><strong>Kecepatan Maksimal:</strong> ${alternatif.kecepatan} Km/h</li>
+                //<li><strong>Motor Power:</strong> ${alternatif.power} Watt</li>
+               // <li><strong>Baterai:</strong> ${alternatif.batrai}</li>
+            //</ul>
+       // </div>
+    //`,
+    // imageUrl: "/storage/" + alternatif.photo,
+    // imageWidth: 400,
+    // imageHeight: 200,
+    // imageAlt: "Custom image",
+     //customClass: {
+       // popup: 'swal-left-align'
+  //  }
+//});
+
 //                 //     // Swal.fire("Sepeda Listrik " + rangking[0][0], "Adalah rekomendasi Sepeda Listrik terbaik", "success");
 //                 // }
 //                 let table3 = `<div class="row">
@@ -256,25 +262,53 @@ $(document).ready(function () {
                 let alternatif = response.alternatif
                 if (alternatif != '') {
 
-                    Swal.fire({
-                        title: alternatif.type,
-                        html: `<p>${alternatif.type} adalah rekomendasi speda listrik terbaik untuk anda dengan<br>
-                        Nama Sepeda: ${alternatif.keterangan} <br>
-                        Harga: Rp. ${alternatif.harga} <br>
-                        Daya: ${alternatif.daya} Kg<br>
-                        Jarak: ${alternatif.jarak} Km<br>
-                        Kecepatan: ${alternatif.kecepatan} Km/h<br>
-                        Power: ${alternatif.power} Watt<br>
-                        Baterai: ${alternatif.batrai} <br>
-                        </p>`,
-                        imageUrl: "/storage/" + alternatif.photo,
-                        imageWidth: 400,
-                        imageHeight: 200,
-                        imageAlt: "Custom image",
-                        customClass: {
-                            popup: 'swal-left-align'
-                        }
-                    });
+                   Swal.fire({
+    title: `<strong style="font-size: 24px; color: #1A2942;">${alternatif.type}</strong>`,
+    html: `
+        <div style="text-align: left; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333;">
+            <p style="font-size: 16px; margin-bottom: 16px;">
+                <strong>${alternatif.type}</strong> adalah rekomendasi sepeda listrik terbaik untuk Anda dengan spesifikasi sebagai berikut:
+            </p>
+            <ul style="list-style-type: none; padding-left: 0; font-size: 15px; line-height: 1.5; max-width: 400px; margin: 0 auto;">
+                <li style="padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <strong>Nama Sepeda:</strong> ${alternatif.keterangan}
+                </li>
+                <li style="padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <strong>Harga:</strong> Rp. ${parseInt(alternatif.harga).toLocaleString('id-ID')}
+                </li>
+                <li style="padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <strong>Daya Angkut:</strong> ${alternatif.daya} Kg
+                </li>
+                <li style="padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <strong>Jarak Tempuh:</strong> ${alternatif.jarak} Km
+                </li>
+                <li style="padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <strong>Kecepatan Maksimal:</strong> ${alternatif.kecepatan} Km/h
+                </li>
+                <li style="padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <strong>Motor Power:</strong> ${alternatif.power} Watt
+                </li>
+                <li style="padding: 6px 0;">
+                    <strong>Baterai:</strong> ${alternatif.batrai}
+                </li>
+            </ul>
+        </div>
+    `,
+    imageUrl: "/storage/" + alternatif.photo,
+    imageWidth: 400,
+    imageHeight: 200,
+    imageAlt: "Gambar Sepeda Listrik",
+    customClass: {
+        popup: 'swal-popup-custom'
+    },
+    // Optional: center the popup text nicely
+    didOpen: () => {
+        const popup = Swal.getPopup();
+        popup.style.textAlign = 'center';
+        popup.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        popup.style.color = '#1A2942';
+    }
+});
 
                     $("#rangking").html(response.view);
                     $("#modal-rekomendasi").modal("show")

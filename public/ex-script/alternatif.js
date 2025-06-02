@@ -7,44 +7,46 @@ $(document).ready(function () {
         ajax: {
             url: "/dataTablesAlternatif",
         },
-        columns: [
-            {
-                data: null,
-                orderable: false,
-                render: function (data, type, row, meta) {
-                    var pageInfo = $("#table-alternatif")
-                        .DataTable()
-                        .page.info();
-                    var index = meta.row + pageInfo.start + 1;
-                    return index;
-                },
-            },
-            {
-                data: "alternatif",
-            },
-            {
-                data: "keterangan",
-            },
-            {
-                data: "type",
-            },
+     columns: [
+    {
+        data: null,
+        orderable: false,
+        render: function (data, type, row, meta) {
+            var pageInfo = $("#table-alternatif").DataTable().page.info();
+            var index = meta.row + pageInfo.start + 1;
+            return index;
+        },
+    },
+    {
+        data: "alternatif", // Alternatif
+    },
+    {
+       data: "type", 
+    },
+    {
+        data: "keterangan", 
 
-            {
-                data: null,
-                render: (data) => {
-                    if (data.photo) {
-                        return `<a target="_blank" href="/storage/${data.photo}" class="badge bg-success text-white">Lihat Gambar</a>`;
-                    } else {
-                        return "Tidak ada gambar";
-                    }
-                },
-            },
-            {
-                data: "action",
-                orderable: true,
-                searchable: true,
-            },
-        ],
+    },
+    {
+        data: null,
+      render: (data) => {
+    if (data.photo) {
+        return `
+            <a target="_blank" href="/storage/${data.photo}" class="badge bg-success text-white">Lihat</a>
+        `;
+    } else {
+        return "Tidak ada gambar";
+    }
+},
+
+    },
+    {
+        data: "action",
+        orderable: true,
+        searchable: true,
+    },
+],
+
         columnDefs: [
             {
                 targets: [3], // index kolom atau sel yang ingin diatur
@@ -121,8 +123,8 @@ $(document).ready(function () {
                     <button class="btn btn-primary" id="btn-update">Ubah</button>
                 `);
                 $("#alternatif").val(response.data.alternatif);
-                $("#keterangan").val(response.data.keterangan);
-                $("#type").val(response.data.type);
+              $("#keterangan").val(response.data.keterangan);
+$("#type").val(response.data.type);
                 $("#harga").val(response.data.harga);
                 $("#batrai").val(response.data.batrai);
                 $("#power").val(response.data.power);
