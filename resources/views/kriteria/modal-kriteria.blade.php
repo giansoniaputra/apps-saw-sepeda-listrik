@@ -32,7 +32,7 @@
                         </select>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="bobot">Bobot</label>
+                        <label for="bobot">Nilai</label>
                         <input type="text" id="bobot" name="bobot" class="form-control">
                     </div>
                 </form>
