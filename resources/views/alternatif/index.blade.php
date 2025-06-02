@@ -12,14 +12,15 @@
             </div>
             <div class="card-body">
                 <table id="table-alternatif" class="table table-bordered table-hover dataTable dtr-inline">
-                    <thead>
-                        <th>Kode</th>
-                        <th>Alternatif</th>
-                        <th>Nama Motor</th>
-                        <th>Type</th>
-                        <th>Gambar</th>
-                        <th>Action</th>
-                    </thead>
+      <thead>
+    <th>Kode</th>
+    <th>Alternatif</th>
+    <th>Type</th>           
+    <th>Nama Sepeda</th>     
+    <th>Gambar</th>
+    <th>Action</th>
+</thead>
+
                     <tbody>
                     </tbody>
                 </table>

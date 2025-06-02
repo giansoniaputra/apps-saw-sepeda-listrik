@@ -21,68 +21,93 @@ class AlternatifController extends Controller
         return view('alternatif.index', $data);
     }
 
-    public function store(Request $request)
-    {
-        $rules = [
-            'alternatif' => 'required|unique:alternatifs',
-            'keterangan' => 'required',
-        ];
-        $pesan = [
-            'alternatif.required' => 'Alternatif tidak boleh kosong!',
-            'alternatif.unique' => 'Alternatif sudah ada!',
-            'keterangan.required' => 'Ketarangan tidak boleh kosong!',
-        ];
-        $validator = Validator::make($request->all(), $rules, $pesan);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()]);
-        } else {
-            $alternatif = new Alternatif($request->all());
-            $alternatif->uuid = Str::orderedUuid();
-            if ($request->file('photo')) {
-                $alternatif->photo = $request->file('photo')->store('photo');
-            }
-            $alternatif->save();
-            return response()->json(['success' => 'Alternatif Berhasi Di Buat!']);
-        }
+  public function store(Request $request)
+{
+    $rules = [
+        'alternatif' => 'required|unique:alternatifs',
+        'keterangan' => 'required',
+        'type' => 'required', // ✅ Tambahkan ini
+    ];
+    $pesan = [
+        'alternatif.required' => 'Alternatif tidak boleh kosong!',
+        'alternatif.unique' => 'Alternatif sudah ada!',
+        'keterangan.required' => 'Keterangan tidak boleh kosong!',
+        'type.required' => 'Type tidak boleh kosong!', // ✅ Tambahkan ini juga
+    ];
+
+    $validator = Validator::make($request->all(), $rules, $pesan);
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()]);
+    } else {
+        $alternatif = new Alternatif($request->only([
+            'alternatif', 'keterangan', 'type', 'harga', 'batrai', 'power', 'kecepatan', 'jarak', 'daya'
+        ])); // ✅ hanya ambil field yang dibutuhkan
+        $alternatif->uuid = Str::orderedUuid();
+      if ($request->hasFile('photo')) {
+    $file = $request->file('photo');
+    $filename = time() . '_' . $file->getClientOriginalName();
+    $path = $file->storeAs('photo', $filename, 'public');
+    $alternatif->photo = $path; // contoh: "photo/1717231234_sepeda.png"
+}
+
+
+        $alternatif->save();
+        return response()->json(['success' => 'Alternatif Berhasil Dibuat!']);
     }
+}
+
 
     public function edit(Alternatif $alternatif)
     {
         return response()->json(['data' => $alternatif]);
     }
 
-    public function update(Alternatif $alternatif, Request $request)
-    {
-        $rules = [
-            'alternatif' => 'required',
-            'keterangan' => 'required',
-        ];
-        $pesan = [
-            'alternatif.required' => 'Alternatif tidak boleh kosong!',
-            'keterangan.required' => 'Ketarangan tidak boleh kosong!',
-        ];
-        $cek = Alternatif::where('uuid', $request->uuid)->first();
-        if ($cek->alternatif == $request->alternatif) {
-            $rules['alternatif'] = 'required';
-            $pesan['alternatif.required'] = 'alternatif tidak boleh kosong';
-        } else {
-            $rules['alternatif'] = 'required|unique:alternatifs';
-            $pesan['alternatif.unique'] = 'alternatif sudah ada';
-            $pesan['alternatif.required'] = 'alternatif tidak boleh kosong';
-        }
-        $validator = Validator::make($request->all(), $rules, $pesan);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()]);
-        } else {
-            $alternatif->fill($request->all());
-            if ($request->file('photo')) {
-                Storage::delete($alternatif->photo);
-                $alternatif->photo = $request->file('photo')->store('photo');
-            }
-            $alternatif->save();
-            return response()->json(['success' => 'Alternatif Berhasi Di Ubah!']);
-        }
+  public function update(Alternatif $alternatif, Request $request)
+{
+    $rules = [
+        'alternatif' => 'required',
+        'keterangan' => 'required',
+    ];
+    $pesan = [
+        'alternatif.required' => 'Alternatif tidak boleh kosong!',
+        'keterangan.required' => 'Ketarangan tidak boleh kosong!',
+    ];
+
+    $cek = Alternatif::where('uuid', $request->uuid)->first();
+    if ($cek->alternatif == $request->alternatif) {
+        $rules['alternatif'] = 'required';
+    } else {
+        $rules['alternatif'] = 'required|unique:alternatifs';
+        $pesan['alternatif.unique'] = 'alternatif sudah ada';
     }
+
+    $validator = Validator::make($request->all(), $rules, $pesan);
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()]);
+    }
+
+    // Update semua field secara manual
+    $alternatif->alternatif = $request->alternatif;
+    $alternatif->keterangan = $request->keterangan;
+    $alternatif->type = $request->type;
+    $alternatif->harga = $request->harga;
+    $alternatif->batrai = $request->batrai;
+    $alternatif->power = $request->power;
+    $alternatif->kecepatan = $request->kecepatan;
+    $alternatif->jarak = $request->jarak;
+    $alternatif->daya = $request->daya;
+
+    if ($request->hasFile('photo')) {
+        Storage::delete($alternatif->photo);
+        $file = $request->file('photo');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $path = $file->storeAs('photo', $filename, 'public');
+        $alternatif->photo = $path;
+    }
+
+    $alternatif->save();
+    return response()->json(['success' => 'Alternatif Berhasil Di Ubah!']);
+}
 
     public function destroy(Alternatif $alternatif)
     {

@@ -27,7 +27,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="type">Type</label>
-                                <textarea name="type" class="form-control" id="type" placeholder="Masukan Nama Motor"></textarea>
+                                <textarea name="type" class="form-control" id="type"></textarea>
 
                             </div>
                             <div class="form-group mb-3">
@@ -39,7 +39,7 @@
                                 <input type="text" name="batrai" id="batrai" class="form-control" placeholder="" />
                             </div>
                             <div class="form-group mb-3">
-                                <label for="power" class="form-label">Power</label>
+                                <label for="power" class="form-label">Motor Power</label>
                                 <input type="text" name="power" id="power" class="form-control" placeholder="" />
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                                 <input type="text" name="jarak" id="jarak" class="form-control" placeholder="" />
                             </div>
                             <div class="form-group mb-3">
-                                <label for="daya" class="form-label">Daya</label>
+                                <label for="daya" class="form-label">Daya Angkut</label>
                                 <input type="text" name="daya" id="daya" class="form-control" placeholder="" />
                             </div>
                             <div class="mb-3">
